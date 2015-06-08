@@ -2,16 +2,15 @@
   <head>
     <meta charset="utf-8" />
     <title>API Reference</title>
-    <link rel="stylesheet" type="text/css" href="site.css" media="screen" />
   </head>
   <body>
   <h1>QuantiModo</h1>
-    <div class="app-desc">QuantiModo makes it easy to retrieve normalized user data from a wide array of devices and applications.\n\n[Learn about QuantiModo](https://quantimo.do) or contact us at [help.quantimo.do](https://help.quantimo.do).\n\n Contact info@quantimo.do for an api key to test the authorization filters.\n * Test User Name: `user`\n * Password: `SuperPassword123!!!` for </div>
+    <div class="app-desc">QuantiModo makes it easy to retrieve normalized user data from a wide array of devices and applications.\n\n[Learn about QuantiModo](https://quantimo.do) or contact us at [help.quantimo.do](https://help.quantimo.do).\n\n Create an account at [QuantiModo](https://quantimo.do), sign in, and add some data at https://quantimo.do/connect to try out the API for yourself.  As long as you're signed in, it will use your browser's cookie for authentication.  However, client applications must use OAuth2 tokens to access the API. for </div>
     
     <div class="app-desc">Contact Info: <a href="hello@helloreverb.com">hello@helloreverb.com</a></div>
     <div class="app-desc">Version: 1.0.0</div>
-    <div class="license-info">All rights reserved</div>
-    <div class="license-url">http://apache.org/licenses/LICENSE-2.0.html</div>
+    <div class="license-info">Apache 2.0</div>
+    <div class="license-url">http://www.apache.org/licenses/LICENSE-2.0.html</div>
   <h2>Access</h2>
   <div class="method-summary">Customize this message as you see fit!</div>
   <h2>Methods</h2>
@@ -20,6 +19,7 @@
   
   <div class="method">
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /connectors/list</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Connectors</span></div>
     <div class="method-summary"><span class="nickname">connectorsListGet</span> List of Connectors</div>
     <div class="method-notes">Returns a list of all available connectors. A connector pulls data from other data providers using their API or a screenscraper.</div>
 
@@ -34,21 +34,33 @@
     
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
-    <pre class="example"><code>[ {\n  "connected" : "aeiou",\n  "image" : "aeiou",\n  "getItUrl" : "aeiou",\n  "noDataYet" : true,\n  "displayName" : "aeiou",\n  "latestData" : 123,\n  "lastUpdate" : 123,\n  "name" : "aeiou",\n  "id" : 123,\n  "connectInstructions" : "aeiou"\n} ]</code></pre>
+    <pre class="example"><code>[ {
+  &quot;connected&quot; : &quot;aeiou&quot;,
+  &quot;image&quot; : &quot;aeiou&quot;,
+  &quot;getItUrl&quot; : &quot;aeiou&quot;,
+  &quot;noDataYet&quot; : true,
+  &quot;displayName&quot; : &quot;aeiou&quot;,
+  &quot;latestData&quot; : 123,
+  &quot;lastUpdate&quot; : 123,
+  &quot;name&quot; : &quot;aeiou&quot;,
+  &quot;id&quot; : 123,
+  &quot;connectInstructions&quot; : &quot;aeiou&quot;
+} ]</code></pre>
     
   </div> <!-- method -->
   <hr>
   
   <div class="method">
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /connectors/{connector}/connect</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Connectors</span></div>
     <div class="method-summary"><span class="nickname">connectorsConnectorConnectGet</span> Obtain a token from 3rd party data source</div>
-    <div class="method-notes">The `connect` method tells it to attempt to obtain a token from the data provider, store it in `connect`.`credentials`, allowing the connector to obtain user data.</div>
+    <div class="method-notes">Attempt to obtain a token from the data provider, store it in the database. With this, the connector to continue to obtain new user data until the token is revoked.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
       <div class="param">connector (required)</div>
 
-      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device </div>
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device. Get a list of available connectors from the /connectors/list endpoint. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -61,14 +73,15 @@
   
   <div class="method">
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /connectors/{connector}/connectInstructions</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Connectors</span></div>
     <div class="method-summary"><span class="nickname">connectorsConnectorConnectInstructionsGet</span> Get connection parameters</div>
-    <div class="method-notes">The `connectInstructions` method returns instructions that describe what parameters and endpoint to use to connect to the given data provider.</div>
+    <div class="method-notes">Returns instructions that describe what parameters and endpoint to use to connect to the given data provider.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
       <div class="param">connector (required)</div>
 
-      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device </div>
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device. Get a list of available connectors from the /connectors/list endpoint. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -81,14 +94,15 @@
   
   <div class="method">
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /connectors/{connector}/disconnect</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Connectors</span></div>
     <div class="method-summary"><span class="nickname">connectorsConnectorDisconnectGet</span> Delete stored connection info</div>
-    <div class="method-notes">The `disconnect` method deletes any stored tokens or connection information from the `connectors` database.</div>
+    <div class="method-notes">The disconnect method deletes any stored tokens or connection information from the connectors database.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
       <div class="param">connector (required)</div>
 
-      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device </div>
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device. Get a list of available connectors from the /connectors/list endpoint. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -101,14 +115,15 @@
   
   <div class="method">
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /connectors/{connector}/info</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Connectors</span></div>
     <div class="method-summary"><span class="nickname">connectorsConnectorInfoGet</span> Get connector info for user</div>
-    <div class="method-notes">The `info` method returns information about the connector such as the connector id, whether or not is connected (i.e. we have a token in the `connector`.`credentials` table, and the update history from the `connector`.`updates` table.)</div>
+    <div class="method-notes">Returns information about the connector such as the connector id, whether or not is connected for this user (i.e. we have a token or credentials), and its update history for the user.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
       <div class="param">connector (required)</div>
 
-      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device </div>
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device. Get a list of available connectors from the /connectors/list endpoint. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -121,8 +136,9 @@
   
   <div class="method">
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /connectors/{connector}/update</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Connectors</span></div>
     <div class="method-summary"><span class="nickname">connectorsConnectorUpdateGet</span> Sync with data source</div>
-    <div class="method-notes">The `update` method tells the QM Connector Framework to check with the data provider (such as Fitbit or MyFitnessPal) and put any new data in the `quantimodo`.`measurements` table.</div>
+    <div class="method-notes">The update method tells the QM Connector Framework to check with the data provider (such as Fitbit or MyFitnessPal) and retrieve any new measurements available.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
@@ -139,351 +155,83 @@
   </div> <!-- method -->
   <hr>
   
-  
-  
   <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /oauth2/authorize</code></pre></div>
-    <div class="method-summary"><span class="nickname">oauth2AuthorizeGet</span> Authorize</div>
-    <div class="method-notes">Ask the user if they want to allow a client applications to submit or obtain data from their QM  account.</div>
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /correlations</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Correlations</span></div>
+    <div class="method-summary"><span class="nickname">correlationsGet</span> Get correlations</div>
+    <div class="method-notes">Get correlations</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
-      <div class="param">response_type (required)</div>
+      <div class="param">effect (optional)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Response type </div>
-      <div class="param">redirect_uri (required)</div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; ORIGINAL variable name of the effect variable for which the user desires correlations </div>
+      <div class="param">cause (optional)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Redirect uri </div>
-      <div class="param">realm (required)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Realm </div>
-      <div class="param">client_id (required)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Client id </div>
-      <div class="param">scope (required)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Scope </div>
-      <div class="param">state (required)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; State </div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; ORIGINAL variable name of the cause variable for which the user desires correlations </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
 
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  
-  
-  <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /public/variables</code></pre></div>
-    <div class="method-summary"><span class="nickname">publicVariablesGet</span> Get public variables</div>
-    <div class="method-notes">Get public variables</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /public/variables/search/{search}</code></pre></div>
-    <div class="method-summary"><span class="nickname">publicVariablesSearchSearchGet</span> Get top 5 PUBLIC variables with the most correlations</div>
-    <div class="method-notes">Get top 5 PUBLIC variables with the most correlations containing the entered search characters. For example, search for &#39;mood&#39; as an effect. Since &#39;Overall Mood&#39; has a lot of correlations with other variables, it should be in the autocomplete list.</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      <div class="param">search (required)</div>
-
-      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Search query </div>
-      <div class="param">effectOrCause (optional)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Allows us to specify which column in the `correlations` table will be searched. Choices are effect or cause. </div>
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /variableCategories</code></pre></div>
-    <div class="method-summary"><span class="nickname">variableCategoriesGet</span> Get variable categories</div>
-    <div class="method-notes">The variable categories include Activity, Causes of Illness, Cognitive Performance, Conditions, Environment, Foods, Location, Miscellaneous, Mood, Nutrition, Physical Activity, Physique, Sleep, Social Interactions, Symptoms, Treatments, Vital Signs, and Work.</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  <div class="method">
-    <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /variableUserSettings</code></pre></div>
-    <div class="method-summary"><span class="nickname">variableUserSettingsPost</span> Change variable user setting</div>
-    <div class="method-notes">Change variable user setting</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      <div class="param">sharingData (required)</div>
-
-      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Variable user settings data </div>
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /variables</code></pre></div>
-    <div class="method-summary"><span class="nickname">variablesGet</span> Get variables by the category name</div>
-    <div class="method-notes">Get variables by the category name</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      <div class="param">userId (optional)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; User id </div>
-      <div class="param">categoryName (optional)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Category name </div>
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  <div class="method">
-    <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /variables</code></pre></div>
-    <div class="method-summary"><span class="nickname">variablesPost</span> Set variable</div>
-    <div class="method-notes">Allows the client to create a new variable in the `variables` table.</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      <div class="param">variableName (required)</div>
-
-      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Original name for the variable. </div>
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /variables/search/{search}</code></pre></div>
-    <div class="method-summary"><span class="nickname">variablesSearchSearchGet</span> Get variables by search query</div>
-    <div class="method-notes">Get variables containing the search characters. Used to provide auto-complete function in variable search boxes.</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      <div class="param">search (required)</div>
-
-      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Search query </div>
-      <div class="param">categoryName (optional)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Filter variables by category name. </div>
-      <div class="param">source (optional)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Filter variables by source name. </div>
-      <div class="param">limit (optional)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Search limit </div>
-      <div class="param">offset (optional)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Search offset </div>
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /variables/{variableName}</code></pre></div>
-    <div class="method-summary"><span class="nickname">variablesVariableNameGet</span> Get info about a variable</div>
-    <div class="method-notes">Get all of the settings and information about a variable by name</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      <div class="param">variableName (required)</div>
-
-      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Variable name </div>
-      <div class="param">categoryName (required)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; categoryName` parameter allows us to filter the variables so that only ones from the specified category are returned. </div>
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  
-  
-  <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /administration/cache/clear</code></pre></div>
-    <div class="method-summary"><span class="nickname">administrationCacheClearGet</span> getCacheClear</div>
-    <div class="method-notes">Clears the memcached cache for the units and some other things.</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /administration/correlations/update</code></pre></div>
-    <div class="method-summary"><span class="nickname">administrationCorrelationsUpdateGet</span> getCorrelationsUpdate</div>
-    <div class="method-notes">Recalculate correlations for a variable</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      <div class="param">modifiedVariable (required)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Original name of variable for which correlations are to be calculated (varchar) </div>
-      <div class="param">userId (optional)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; ID for user for whom the correlations should be recalculated. </div>
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /administration/correlations/updateAllUsers</code></pre></div>
-    <div class="method-summary"><span class="nickname">administrationCorrelationsUpdateAllUsersGet</span> getCorrelationsUpdateAllUsers</div>
-    <div class="method-notes">Recalculates correlations for all variables, for all users.</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /administration/correlations/updateAllVariables</code></pre></div>
-    <div class="method-summary"><span class="nickname">administrationCorrelationsUpdateAllVariablesGet</span> getCorrelationsUpdateAllVariables</div>
-    <div class="method-notes">Updates the correlations for all variables for a given user.</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      <div class="param">userId (optional)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; ID for user for whom the correlations should be recalculated. If empty, uses currently logged in user. </div>
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  
-  
-  <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /user/me</code></pre></div>
-    <div class="method-summary"><span class="nickname">userMeGet</span> Get all available units for variableGet authenticated user</div>
-    <div class="method-notes"></div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#"></a></div>
-
-    
-  </div> <!-- method -->
-  <hr>
-  
-  <div class="method">
-    <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /v1/organizations/{organizationId}/users</code></pre></div>
-    <div class="method-summary"><span class="nickname">v1OrganizationsOrganizationIdUsersPost</span> Get user tokens for existing users, create new users</div>
-    <div class="method-notes">Get user tokens for existing users, create new users</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      <div class="param">organizationId (required)</div>
-
-      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Organization ID </div>
-      <div class="param">body (required)</div>
-
-      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Provides organization token and user ID </div>
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#">UserTokenSuccessfulResponse</a></div>
+    <div class="return-type"><a href="#array">array[Correlation]</a></div>
 
     
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
-    <pre class="example"><code>{\n  "code" : 123,\n  "message" : "aeiou",\n  "user" : {\n    "access_token" : "aeiou",\n    "_id" : 123\n  }\n}</code></pre>
+    <pre class="example"><code>[ {
+  &quot;correlationCoefficient&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;durationOfAction&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;cause&quot; : &quot;aeiou&quot;,
+  &quot;numberOfPairs&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;causalityFactor&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;effectCategory&quot; : &quot;aeiou&quot;,
+  &quot;statisticalSignificance&quot; : &quot;aeiou&quot;,
+  &quot;effectSize&quot; : &quot;aeiou&quot;,
+  &quot;effect&quot; : &quot;aeiou&quot;,
+  &quot;onsetDelay&quot; : 3.149,
+  &quot;causeCategory&quot; : &quot;aeiou&quot;,
+  &quot;reverseCorrelation&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;timestamp&quot; : 1.3579000000000001069366817318950779736042022705078125
+} ]</code></pre>
     
   </div> <!-- method -->
   <hr>
   
-  
+  <div class="method">
+    <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /correlations</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Variables</span></div>
+    <div class="method-summary"><span class="nickname">correlationsPost</span> Store or Update a Correlation</div>
+    <div class="method-notes">Store or Update a Correlation</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">cause (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>
+      <div class="param">effect (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>
+      <div class="param">correlationcoefficient (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>
+      <div class="param">vote (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash;  </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#"></a></div>
+
+    
+  </div> <!-- method -->
+  <hr>
   
   <div class="method">
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /measurementSources</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Measurements</span></div>
     <div class="method-summary"><span class="nickname">measurementSourcesGet</span> Get measurement sources</div>
-    <div class="method-notes"></div>
+    <div class="method-notes">Returns a list of all the apps from which measurement data is obtained.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
@@ -499,14 +247,15 @@
   
   <div class="method">
     <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /measurementSources</code></pre></div>
-    <div class="method-summary"><span class="nickname">measurementSourcesPost</span> Set measurement source</div>
-    <div class="method-notes">Set measurement source</div>
+    <div class="method-tags"> <span class="method-tag">Measurements</span></div>
+    <div class="method-summary"><span class="nickname">measurementSourcesPost</span> Add a data source</div>
+    <div class="method-notes">Add a life-tracking app or device to the QuantiModo list of data sources.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
-      <div class="param">Measurements (required)</div>
+      <div class="param">name (required)</div>
 
-      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; An array of measurements you want to insert </div>
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; An array of names of data sources you want to add. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -519,8 +268,9 @@
   
   <div class="method">
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /measurements</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Measurements</span></div>
     <div class="method-summary"><span class="nickname">measurementsGet</span> Get measurements for this user</div>
-    <div class="method-notes">Get measurements for this user</div>
+    <div class="method-notes">Measurements are any value that can be recorded like daily steps, a mood rating, or apples eaten.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
@@ -554,14 +304,15 @@
   
   <div class="method">
     <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /measurements/v2</code></pre></div>
-    <div class="method-summary"><span class="nickname">measurementsV2Post</span> Set measurement</div>
-    <div class="method-notes">Set measurement</div>
+    <div class="method-tags"> <span class="method-tag">Measurements</span></div>
+    <div class="method-summary"><span class="nickname">measurementsV2Post</span> Post a new set of measurements to the database</div>
+    <div class="method-notes">You can submit multiple measurements in a \&quot;measurements\&quot; sub-array.  If the variable these measurements correspond to does not already exist in the database, it will be automatically added.  The request body should look something like [{\&quot;measurements\&quot;:[{\&quot;timestamp\&quot;:1406419860,\&quot;value\&quot;:\&quot;1\&quot;,\&quot;note\&quot;:\&quot;I am a note about back pain.\&quot;},{\&quot;timestamp\&quot;:1406519865,\&quot;value\&quot;:\&quot;3\&quot;,\&quot;note\&quot;:\&quot;I am another note about back pain.\&quot;}],\&quot;name\&quot;:\&quot;Back Pain\&quot;,\&quot;source\&quot;:\&quot;QuantiModo\&quot;,\&quot;category\&quot;:\&quot;Symptoms\&quot;,\&quot;combinationOperation\&quot;:\&quot;MEAN\&quot;,\&quot;unit\&quot;:\&quot;/5\&quot;}]</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
-      <div class="param">Measurements (required)</div>
+      <div class="param">measurements (required)</div>
 
-      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; An array of measurements you want to insert </div>
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; An array of measurements you want to insert. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -574,8 +325,9 @@
   
   <div class="method">
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /measurementsRange</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Measurements</span></div>
     <div class="method-summary"><span class="nickname">measurementsRangeGet</span> Get measurements range for this user</div>
-    <div class="method-notes">Get timestamp of the user&#39;s first and last measurements taken.</div>
+    <div class="method-notes">Get Unix time-stamp (epoch time) of the user&#39;s first and last measurements taken.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
@@ -595,18 +347,32 @@
   </div> <!-- method -->
   <hr>
   
-  
-  
   <div class="method">
-    <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /sharing</code></pre></div>
-    <div class="method-summary"><span class="nickname">sharingPost</span> Share variable</div>
-    <div class="method-notes">Share variable</div>
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /oauth2/accesstoken</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Oauth</span></div>
+    <div class="method-summary"><span class="nickname">oauth2AccesstokenGet</span> Access Token</div>
+    <div class="method-notes">Client provides authorization token obtained from /api/oauth2/authorize to this endpoint and receives an access token. Access token can then</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
-      <div class="param">sharingData (required)</div>
+      <div class="param">responseType (required)</div>
 
-      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Sharing data </div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Response type </div>
+      <div class="param">redirectUri (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Redirect uri </div>
+      <div class="param">realm (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Realm </div>
+      <div class="param">clientId (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Client id </div>
+      <div class="param">scope (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Scope </div>
+      <div class="param">state (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; State </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -618,15 +384,31 @@
   <hr>
   
   <div class="method">
-    <div class="method-path"><pre class="delete"><code class="huge"><span>delete</span>: /sharing</code></pre></div>
-    <div class="method-summary"><span class="nickname">sharingDelete</span> Removes access permissions for a given variable for a given user.</div>
-    <div class="method-notes">Delete variable sharing</div>
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /oauth2/authorize</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Oauth</span></div>
+    <div class="method-summary"><span class="nickname">oauth2AuthorizeGet</span> Authorize</div>
+    <div class="method-notes">Ask the user if they want to allow a client applications to submit or obtain data from their QM  account.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
-      <div class="param">sharingData (required)</div>
+      <div class="param">clientId (required)</div>
 
-      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Sharing data </div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; This is the unique ID that QuantiModo uses to identify your application. Obtain a client id by emailing info@quantimo.do. </div>
+      <div class="param">realm (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of the realm representing the users of your distributed applications and services. A \&quot;realm\&quot; attribute MAY be included to indicate the scope of protection. </div>
+      <div class="param">redirectUri (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The redirect URI is the URL within your client application that will receive the OAuth2 credentials. </div>
+      <div class="param">responseType (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; If the value is code, launches a Basic flow, requiring a POST to the token endpoint to obtain the tokens. If the value is token id_token or id_token token, launches an Implicit flow, requiring the use of Javascript at the redirect URI to retrieve tokens from the URI #fragment. </div>
+      <div class="param">scope (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Scopes include basic, readmeasurements, and writemeasurements. The \&quot;basic\&quot; scope allows you to read user info (displayname, email, etc). The \&quot;readmeasurements\&quot; scope allows one to read a user&#39;s data. The \&quot;writemeasurements\&quot; scope allows you to write user data. Separate multiple scopes by a space. </div>
+      <div class="param">state (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; An opaque string that is round-tripped in the protocol; that is to say, it is returned as a URI parameter in the Basic flow, and in the URI </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -638,67 +420,67 @@
   <hr>
   
   <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /sharing/{variableName}</code></pre></div>
-    <div class="method-summary"><span class="nickname">sharingVariableNameGet</span> Get variable sharing details</div>
-    <div class="method-notes"></div>
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /pairs</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Pairs</span></div>
+    <div class="method-summary"><span class="nickname">pairsGet</span> Get pairs</div>
+    <div class="method-notes">Pairs cause measurements with effect measurements grouped over the duration of action after the onset delay.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
-      <div class="param">variableName (required)</div>
+      <div class="param">cause (required)</div>
 
-      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Variable name </div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Original variable name for the explanatory or independent variable </div>
+      <div class="param">causeSource (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of data source that the cause measurements should come from </div>
+      <div class="param">causeUnit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Abbreviated name for the unit cause measurements to be returned in </div>
+      <div class="param">delay (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Delay before onset of action (in seconds) from the cause variable settings. </div>
+      <div class="param">duration (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Duration of action (in seconds) from the cause variable settings. </div>
+      <div class="param">effect (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Original variable name for the outcome or dependent variable </div>
+      <div class="param">effectSource (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of data source that the effectmeasurements should come from </div>
+      <div class="param">effectUnit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Abbreviated name for the unit effect measurements to be returned in </div>
+      <div class="param">endTime (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The most recent date (in epoch time) for which we should return measurements </div>
+      <div class="param">startTime (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The earliest date (in epoch time) for which we should return measurements </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
 
     <div class="return-type"><a href="#"></a></div>
 
-    
-  </div> <!-- method -->
-  <hr>
-  
-  
-  
-  <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /correlations</code></pre></div>
-    <div class="method-summary"><span class="nickname">correlationsGet</span> Get correlations</div>
-    <div class="method-notes">Get correlations</div>
-
-    <h3 class="field-label">Parameters</h3>
-    <div class="field-items">
-      <div class="param">effect (optional)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; ORIGINAL variable name of the effect variable for which the user desires correlations </div>
-      <div class="param">cause (optional)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; ORIGINAL variable name of the cause variable for which the user desires correlations </div>
-      
-    </div>  <!-- field-items -->
-    <h3 class="field-label">Return type</h3>
-
-    <div class="return-type"><a href="#array">array[Correlation]</a></div>
-
-    
-    <h3 class="field-label">Example data</h3>
-    <div class="example-data-content-type">Content-Type: application/json</div>
-    <pre class="example"><code>[ {\n  "correlationCoefficient" : 1.3579000000000001069366817318950779736042022705078125,\n  "durationOfAction" : 1.3579000000000001069366817318950779736042022705078125,\n  "cause" : "aeiou",\n  "numberOfPairs" : 1.3579000000000001069366817318950779736042022705078125,\n  "causalityFactor" : 1.3579000000000001069366817318950779736042022705078125,\n  "effectCategory" : "aeiou",\n  "statisticalSignificance" : "aeiou",\n  "effectSize" : "aeiou",\n  "effect" : "aeiou",\n  "onsetDelay" : 3.149,\n  "causeCategory" : "aeiou",\n  "reverseCorrelation" : 1.3579000000000001069366817318950779736042022705078125,\n  "timestamp" : 1.3579000000000001069366817318950779736042022705078125\n} ]</code></pre>
     
   </div> <!-- method -->
   <hr>
   
   <div class="method">
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /public/correlations/search/{search}</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Correlations</span></div>
     <div class="method-summary"><span class="nickname">publicCorrelationsSearchSearchGet</span> Get average correlations for variables containing search term</div>
-    <div class="method-notes">Returns the average correlations from all users for all public variables that contain the characters in the search query.</div>
+    <div class="method-notes">Returns the average correlations from all users for all public variables that contain the characters in the search query. Returns average of all users public variable correlations with a specified cause or effect.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
       <div class="param">search (required)</div>
 
-      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Search query </div>
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Name of the variable that you want to know the causes or effects of. </div>
       <div class="param">effectOrCause (required)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Specifies whehter to return the effects or causes of the searched variable. </div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Specifies whether to return the effects or causes of the searched variable. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -708,15 +490,196 @@
     
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
-    <pre class="example"><code>[ {\n  "correlationCoefficient" : 1.3579000000000001069366817318950779736042022705078125,\n  "durationOfAction" : 1.3579000000000001069366817318950779736042022705078125,\n  "cause" : "aeiou",\n  "numberOfPairs" : 1.3579000000000001069366817318950779736042022705078125,\n  "causalityFactor" : 1.3579000000000001069366817318950779736042022705078125,\n  "effectCategory" : "aeiou",\n  "statisticalSignificance" : "aeiou",\n  "effectSize" : "aeiou",\n  "effect" : "aeiou",\n  "onsetDelay" : 3.149,\n  "causeCategory" : "aeiou",\n  "reverseCorrelation" : 1.3579000000000001069366817318950779736042022705078125,\n  "timestamp" : 1.3579000000000001069366817318950779736042022705078125\n} ]</code></pre>
+    <pre class="example"><code>[ {
+  &quot;correlationCoefficient&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;durationOfAction&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;cause&quot; : &quot;aeiou&quot;,
+  &quot;numberOfPairs&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;causalityFactor&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;effectCategory&quot; : &quot;aeiou&quot;,
+  &quot;statisticalSignificance&quot; : &quot;aeiou&quot;,
+  &quot;effectSize&quot; : &quot;aeiou&quot;,
+  &quot;effect&quot; : &quot;aeiou&quot;,
+  &quot;onsetDelay&quot; : 3.149,
+  &quot;causeCategory&quot; : &quot;aeiou&quot;,
+  &quot;reverseCorrelation&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;timestamp&quot; : 1.3579000000000001069366817318950779736042022705078125
+} ]</code></pre>
     
   </div> <!-- method -->
   <hr>
   
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /public/variables</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Variables</span></div>
+    <div class="method-summary"><span class="nickname">publicVariablesGet</span> Get public variables</div>
+    <div class="method-notes">This endpoint retrieves an array of all public variables. Public variables are things like foods, medications, symptoms, conditions, and anything not unique to a particular user. For instance, a telephone number or name would not be a public variable.</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#"></a></div>
+
+    
+  </div> <!-- method -->
+  <hr>
   
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /public/variables/search/{search}</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Variables</span></div>
+    <div class="method-summary"><span class="nickname">publicVariablesSearchSearchGet</span> Get top 5 PUBLIC variables with the most correlations</div>
+    <div class="method-notes">Get top 5 PUBLIC variables with the most correlations containing the entered search characters. For example, search for &#39;mood&#39; as an effect. Since &#39;Overall Mood&#39; has a lot of correlations with other variables, it should be in the autocomplete list.</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">search (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Search query can be some fraction of a variable name. </div>
+      <div class="param">effectOrCause (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Allows us to specify which column in the `correlations` table will be searched. Choices are effect or cause. </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#"></a></div>
+
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /unitCategories</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Units</span></div>
+    <div class="method-summary"><span class="nickname">unitCategoriesGet</span> Get unit categories</div>
+    <div class="method-notes">Get a list of the categories of measurement units such as &#39;Distance&#39;, &#39;Duration&#39;, &#39;Energy&#39;, &#39;Frequency&#39;, &#39;Miscellany&#39;, &#39;Pressure&#39;, &#39;Proportion&#39;, &#39;Rating&#39;, &#39;Temperature&#39;, &#39;Volume&#39;, and &#39;Weight&#39;.</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#"></a></div>
+
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /units</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Units</span></div>
+    <div class="method-summary"><span class="nickname">unitsGet</span> Get all available units</div>
+    <div class="method-notes">Get all available units</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">unitName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Unit name </div>
+      <div class="param">abbreviatedUnitName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Restrict the results to a specific unit by providing the unit abbreviation. </div>
+      <div class="param">categoryName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Restrict the results to a specific unit category by providing the unit category name. </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#"></a></div>
+
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /user/me</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">User</span></div>
+    <div class="method-summary"><span class="nickname">userMeGet</span> Get all available units for variableGet authenticated user</div>
+    <div class="method-notes">Returns user info for the currently authenticated user.</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#"></a></div>
+
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /v1/connect.js</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Connect</span></div>
+    <div class="method-summary"><span class="nickname">v1Connect.jsGet</span> Get embeddable connect javascript</div>
+    <div class="method-notes">Get embeddable connect javascript</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">t (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; User token </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#"></a></div>
+
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /v1/connect/mobile</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Connect</span></div>
+    <div class="method-summary"><span class="nickname">v1ConnectMobileGet</span> Mobile connect page</div>
+    <div class="method-notes">Mobile connect page</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">t (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; User token </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#"></a></div>
+
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /v1/correlations</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Correlations</span></div>
+    <div class="method-summary"><span class="nickname">v1CorrelationsPost</span> Add correlation or/and vote for it</div>
+    <div class="method-notes">Add correlation or/and vote for it</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">body (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Provides correlation data </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#"></a></div>
+
+    
+  </div> <!-- method -->
+  <hr>
   
   <div class="method">
     <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /v1/organizations/{organizationId}/users</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Organizations</span><span class="method-tag">User</span></div>
     <div class="method-summary"><span class="nickname">v1OrganizationsOrganizationIdUsersPost</span> Get user tokens for existing users, create new users</div>
     <div class="method-notes">Get user tokens for existing users, create new users</div>
 
@@ -737,50 +700,284 @@
     
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
-    <pre class="example"><code>{\n  "code" : 123,\n  "message" : "aeiou",\n  "user" : {\n    "access_token" : "aeiou",\n    "_id" : 123\n  }\n}</code></pre>
+    <pre class="example"><code>{
+  &quot;code&quot; : 123,
+  &quot;message&quot; : &quot;aeiou&quot;,
+  &quot;user&quot; : {
+    &quot;access_token&quot; : &quot;aeiou&quot;,
+    &quot;_id&quot; : 123
+  }
+}</code></pre>
     
   </div> <!-- method -->
   <hr>
   
-  
-  
   <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /pairs</code></pre></div>
-    <div class="method-summary"><span class="nickname">pairsGet</span> Get pairs</div>
-    <div class="method-notes">Pairs cause measurements with effect measurements grouped over the duration of action after the onset delay.</div>
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /v1/organizations/{organizationId}/users/{userId}/variables/{variableName}/causes</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Correlations</span></div>
+    <div class="method-summary"><span class="nickname">v1OrganizationsOrganizationIdUsersUserIdVariablesVariableNameCausesGet</span> Search user correlations for a given effect</div>
+    <div class="method-notes">Returns average of all correlations and votes for all user cause variables for a given effect. If parameter \&quot;include_public\&quot; is used, it also returns public correlations. User correlation overwrites or supersedes public correlation.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
-      <div class="param">cause (required)</div>
+      <div class="param">organizationId (required)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Original variable name for the explanatory or independent variable </div>
-      <div class="param">effect (required)</div>
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Organization ID </div>
+      <div class="param">userId (required)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Original variable name for the outcome or dependent variable </div>
-      <div class="param">duration (optional)</div>
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; User id </div>
+      <div class="param">variableName (required)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Duration of action (in seconds) from the cause variable settings. </div>
-      <div class="param">delay (optional)</div>
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Effect variable name </div>
+      <div class="param">organizationToken (required)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Delay before onset of action (in seconds) from the cause variable settings. </div>
-      <div class="param">startTime (optional)</div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Organization access token </div>
+      <div class="param">includePublic (optional)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The earliest date (in epoch time) for which we should return measurements </div>
-      <div class="param">endTime (optional)</div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Include bublic correlations, Can be \&quot;1\&quot; or empty. </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The most recent date (in epoch time) for which we should return measurements </div>
-      <div class="param">causeSource (optional)</div>
+    <div class="return-type"><a href="#array">array[Correlation]</a></div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of data source that the cause measurements should come from </div>
-      <div class="param">effectSource (optional)</div>
+    
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  &quot;correlationCoefficient&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;durationOfAction&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;cause&quot; : &quot;aeiou&quot;,
+  &quot;numberOfPairs&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;causalityFactor&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;effectCategory&quot; : &quot;aeiou&quot;,
+  &quot;statisticalSignificance&quot; : &quot;aeiou&quot;,
+  &quot;effectSize&quot; : &quot;aeiou&quot;,
+  &quot;effect&quot; : &quot;aeiou&quot;,
+  &quot;onsetDelay&quot; : 3.149,
+  &quot;causeCategory&quot; : &quot;aeiou&quot;,
+  &quot;reverseCorrelation&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;timestamp&quot; : 1.3579000000000001069366817318950779736042022705078125
+} ]</code></pre>
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /v1/organizations/{organizationId}/users/{userId}/variables/{variableName}/effects</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Correlations</span></div>
+    <div class="method-summary"><span class="nickname">v1OrganizationsOrganizationIdUsersUserIdVariablesVariableNameEffectsGet</span> Search user correlations for a given cause</div>
+    <div class="method-notes">Returns average of all correlations and votes for all user cause variables for a given effect. If parameter \&quot;include_public\&quot; is used, it also returns public correlations. User correlation overwrites or supersedes public correlation.</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of data source that the effectmeasurements should come from </div>
-      <div class="param">causeUnit (optional)</div>
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">organizationId (required)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Abbreviated name for the unit cause measurements to be returned in </div>
-      <div class="param">effectUnit (optional)</div>
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Organization ID </div>
+      <div class="param">userId (required)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Abbreviated name for the unit effect measurements to be returned in </div>
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; User id </div>
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Cause variable name </div>
+      <div class="param">organizationToken (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Organization access token </div>
+      <div class="param">includePublic (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Include bublic correlations, Can be \&quot;1\&quot; or empty. </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#array">array[Correlation]</a></div>
+
+    
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  &quot;correlationCoefficient&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;durationOfAction&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;cause&quot; : &quot;aeiou&quot;,
+  &quot;numberOfPairs&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;causalityFactor&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;effectCategory&quot; : &quot;aeiou&quot;,
+  &quot;statisticalSignificance&quot; : &quot;aeiou&quot;,
+  &quot;effectSize&quot; : &quot;aeiou&quot;,
+  &quot;effect&quot; : &quot;aeiou&quot;,
+  &quot;onsetDelay&quot; : 3.149,
+  &quot;causeCategory&quot; : &quot;aeiou&quot;,
+  &quot;reverseCorrelation&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;timestamp&quot; : 1.3579000000000001069366817318950779736042022705078125
+} ]</code></pre>
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /v1/variables/{variableName}/causes</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Correlations</span></div>
+    <div class="method-summary"><span class="nickname">v1VariablesVariableNameCausesGet</span> Search user correlations for a given effect</div>
+    <div class="method-notes">Returns average of all correlations and votes for all user cause variables for a given effect</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Effect variable name </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#array">array[Correlation]</a></div>
+
+    
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  &quot;correlationCoefficient&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;durationOfAction&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;cause&quot; : &quot;aeiou&quot;,
+  &quot;numberOfPairs&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;causalityFactor&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;effectCategory&quot; : &quot;aeiou&quot;,
+  &quot;statisticalSignificance&quot; : &quot;aeiou&quot;,
+  &quot;effectSize&quot; : &quot;aeiou&quot;,
+  &quot;effect&quot; : &quot;aeiou&quot;,
+  &quot;onsetDelay&quot; : 3.149,
+  &quot;causeCategory&quot; : &quot;aeiou&quot;,
+  &quot;reverseCorrelation&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;timestamp&quot; : 1.3579000000000001069366817318950779736042022705078125
+} ]</code></pre>
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /v1/variables/{variableName}/effects</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Correlations</span></div>
+    <div class="method-summary"><span class="nickname">v1VariablesVariableNameEffectsGet</span> Search user correlations for a given cause</div>
+    <div class="method-notes">Returns average of all correlations and votes for all user effect variables for a given cause</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Cause variable name </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#array">array[Correlation]</a></div>
+
+    
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  &quot;correlationCoefficient&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;durationOfAction&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;cause&quot; : &quot;aeiou&quot;,
+  &quot;numberOfPairs&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;causalityFactor&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;effectCategory&quot; : &quot;aeiou&quot;,
+  &quot;statisticalSignificance&quot; : &quot;aeiou&quot;,
+  &quot;effectSize&quot; : &quot;aeiou&quot;,
+  &quot;effect&quot; : &quot;aeiou&quot;,
+  &quot;onsetDelay&quot; : 3.149,
+  &quot;causeCategory&quot; : &quot;aeiou&quot;,
+  &quot;reverseCorrelation&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;timestamp&quot; : 1.3579000000000001069366817318950779736042022705078125
+} ]</code></pre>
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /v1/variables/{variableName}/public/causes</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Correlations</span></div>
+    <div class="method-summary"><span class="nickname">v1VariablesVariableNamePublicCausesGet</span> Search public correlations for a given effect</div>
+    <div class="method-notes">Returns average of all correlations and votes for all public cause variables for a given effect</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Effect variable name </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#array">array[Correlation]</a></div>
+
+    
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  &quot;correlationCoefficient&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;durationOfAction&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;cause&quot; : &quot;aeiou&quot;,
+  &quot;numberOfPairs&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;causalityFactor&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;effectCategory&quot; : &quot;aeiou&quot;,
+  &quot;statisticalSignificance&quot; : &quot;aeiou&quot;,
+  &quot;effectSize&quot; : &quot;aeiou&quot;,
+  &quot;effect&quot; : &quot;aeiou&quot;,
+  &quot;onsetDelay&quot; : 3.149,
+  &quot;causeCategory&quot; : &quot;aeiou&quot;,
+  &quot;reverseCorrelation&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;timestamp&quot; : 1.3579000000000001069366817318950779736042022705078125
+} ]</code></pre>
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /v1/variables/{variableName}/public/effects</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Correlations</span></div>
+    <div class="method-summary"><span class="nickname">v1VariablesVariableNamePublicEffectsGet</span> Search public correlations for a given cause</div>
+    <div class="method-notes">Returns average of all correlations and votes for all public cause variables for a given cause</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Cause variable name </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#array">array[Correlation]</a></div>
+
+    
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  &quot;correlationCoefficient&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;durationOfAction&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;cause&quot; : &quot;aeiou&quot;,
+  &quot;numberOfPairs&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;causalityFactor&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;effectCategory&quot; : &quot;aeiou&quot;,
+  &quot;statisticalSignificance&quot; : &quot;aeiou&quot;,
+  &quot;effectSize&quot; : &quot;aeiou&quot;,
+  &quot;effect&quot; : &quot;aeiou&quot;,
+  &quot;onsetDelay&quot; : 3.149,
+  &quot;causeCategory&quot; : &quot;aeiou&quot;,
+  &quot;reverseCorrelation&quot; : 1.3579000000000001069366817318950779736042022705078125,
+  &quot;timestamp&quot; : 1.3579000000000001069366817318950779736042022705078125
+} ]</code></pre>
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /variableCategories</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Variables</span></div>
+    <div class="method-summary"><span class="nickname">variableCategoriesGet</span> Get variable categories</div>
+    <div class="method-notes">The variable categories include Activity, Causes of Illness, Cognitive Performance, Conditions, Environment, Foods, Location, Miscellaneous, Mood, Nutrition, Physical Activity, Physique, Sleep, Social Interactions, Symptoms, Treatments, Vital Signs, and Work.</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -791,15 +988,17 @@
   </div> <!-- method -->
   <hr>
   
-  
-  
   <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /unitCategories</code></pre></div>
-    <div class="method-summary"><span class="nickname">unitCategoriesGet</span> Get unit categories</div>
-    <div class="method-notes"></div>
+    <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /variableUserSettings</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Variables</span></div>
+    <div class="method-summary"><span class="nickname">variableUserSettingsPost</span> Update User Settings for a Variable</div>
+    <div class="method-notes">Users can change things like the display name for a variable. They can also change the parameters used in analysis of that variable such as the expected duration of action for a variable to have an effect, the estimated delay before the onset of action. In order to filter out erroneous data, they are able to set the maximum and minimum reasonable daily values for a variable.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
+      <div class="param">sharingData (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Variable user settings data </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -811,21 +1010,19 @@
   <hr>
   
   <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /units</code></pre></div>
-    <div class="method-summary"><span class="nickname">unitsGet</span> Get all available units</div>
-    <div class="method-notes">Get all available units</div>
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /variables</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Variables</span></div>
+    <div class="method-summary"><span class="nickname">variablesGet</span> Get variables by the category name</div>
+    <div class="method-notes">Get variables by the category name</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
-      <div class="param">unitName (optional)</div>
+      <div class="param">userId (optional)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Unit name </div>
-      <div class="param">abbreviatedUnitName (optional)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Unit abbreviation </div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; User id </div>
       <div class="param">categoryName (optional)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Unit category </div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Category name </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -837,24 +1034,70 @@
   <hr>
   
   <div class="method">
-    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /unitsVariable</code></pre></div>
-    <div class="method-summary"><span class="nickname">unitsVariableGet</span> Get all available units for variable</div>
-    <div class="method-notes">Get all available units for variable</div>
+    <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /variables</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Variables</span></div>
+    <div class="method-summary"><span class="nickname">variablesPost</span> Set variable</div>
+    <div class="method-notes">Allows the client to create a new variable in the `variables` table.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
-      <div class="param">variable (required)</div>
+      <div class="param">variableName (required)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Variable name </div>
-      <div class="param">unitName (optional)</div>
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Original name for the variable. </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Unit name </div>
-      <div class="param">cabbreviatedUnitName (optional)</div>
+    <div class="return-type"><a href="#"></a></div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Unit abbreviation </div>
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /variables/search/{search}</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Variables</span></div>
+    <div class="method-summary"><span class="nickname">variablesSearchSearchGet</span> Get variables by search query</div>
+    <div class="method-notes">Get variables containing the search characters for which the currently logged in user has measurements. Used to provide auto-complete function in variable search boxes.</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">search (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Search query which may be an entire variable name or a fragment of one. </div>
       <div class="param">categoryName (optional)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Unit category </div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Filter variables by category name. The variable categories include Activity, Causes of Illness, Cognitive Performance, Conditions, Environment, Foods, Location, Miscellaneous, Mood, Nutrition, Physical Activity, Physique, Sleep, Social Interactions, Symptoms, Treatments, Vital Signs, and Work. </div>
+      <div class="param">source (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Specify a data source name to only return variables from a specific data source. </div>
+      <div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div>
+      <div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#"></a></div>
+
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /variables/{variableName}</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Variables</span></div>
+    <div class="method-summary"><span class="nickname">variablesVariableNameGet</span> Get info about a variable</div>
+    <div class="method-notes">Get all of the settings and information about a variable by its name. If the logged in user has modified the settings for the variable, these will be provided instead of the default settings for that variable.</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Variable name </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -923,6 +1166,17 @@
   
   
   <div class="model">
+    <h3 class="field-label"><a name="JsonErrorResponse">JsonErrorResponse</a></h3>
+    <div class="field-items">
+      <div class="param">status </div><div class="param-desc"><span class="param-type">String</span> Status: \&quot;ok\&quot; or \&quot;error\&quot;</div>
+      <div class="param">message </div><div class="param-desc"><span class="param-type">String</span> Error message</div>
+      
+    </div>  <!-- field-items -->
+  </div>
+  
+  
+  
+  <div class="model">
     <h3 class="field-label"><a name="Measurement">Measurement</a></h3>
     <div class="field-items">
       <div class="param">variable </div><div class="param-desc"><span class="param-type">String</span> ORIGINAL Name of the variable for which we are creating the measurement records</div>
@@ -930,6 +1184,7 @@
       <div class="param">timestamp </div><div class="param-desc"><span class="param-type">Long</span> Timestamp for the measurement event in epoch time</div>
       <div class="param">value </div><div class="param-desc"><span class="param-type">Double</span> Measurement value</div>
       <div class="param">unit </div><div class="param-desc"><span class="param-type">String</span> Unit of Measurement</div>
+      <div class="param">note </div><div class="param-desc"><span class="param-type">String</span> Optional note supplied with the measurement. Can be up to 255 characters in length.</div>
       
     </div>  <!-- field-items -->
   </div>
@@ -977,6 +1232,19 @@
       <div class="param">min_time_of_day </div><div class="param-desc"><span class="param-type">Integer</span> Earliest time of day when measurements will be accessible in epoch seconds</div>
       <div class="param">max_time_of_day </div><div class="param-desc"><span class="param-type">Integer</span> Latest time of day when measurements will be accessible in epoch seconds</div>
       <div class="param">week </div><div class="param-desc"><span class="param-type">String</span> Maybe specifies if only weekday measurements should be accessible</div>
+      
+    </div>  <!-- field-items -->
+  </div>
+  
+  
+  
+  <div class="model">
+    <h3 class="field-label"><a name="PostCorrelation">PostCorrelation</a></h3>
+    <div class="field-items">
+      <div class="param">cause </div><div class="param-desc"><span class="param-type">String</span> Cause variable name</div>
+      <div class="param">effect </div><div class="param-desc"><span class="param-type">String</span> Effect variable name</div>
+      <div class="param">correlation </div><div class="param-desc"><span class="param-type">Double</span> Correlation value</div>
+      <div class="param">vote </div><div class="param-desc"><span class="param-type">Integer</span> Vote: 0 or 1</div>
       
     </div>  <!-- field-items -->
   </div>
@@ -1183,6 +1451,7 @@ hr	{
 
 pre {
   padding: 10px;
+  margin-bottom: 2px;
 }
 
 pre.get {
@@ -1264,6 +1533,19 @@ code {
   font-weight: bold;
 }
 
+.method-tags {
+  text-align: right;
+}
+
+.method-tag {
+  background: none repeat scroll 0% 0% #24A600;
+  border-radius: 3px;
+  padding: 2px 10px;
+  margin: 2px;
+  color: #FFF;
+  display: inline-block;
+  text-decoration: none;
+}
   </style>
   </body>
 </html>

@@ -5,12 +5,12 @@
   </head>
   <body>
   <h1>QuantiModo</h1>
-    <div class="app-desc">QuantiModo makes it easy to retrieve normalized user data from a wide array of devices and applications.\n\n[Learn about QuantiModo](https://quantimo.do) or contact us at [help.quantimo.do](https://help.quantimo.do).\n\n Create an account at [QuantiModo](https://quantimo.do), sign in, and add some data at https://quantimo.do/connect to try out the API for yourself.  As long as you're signed in, it will use your browser's cookie for authentication.  However, client applications must use OAuth2 tokens to access the API. for </div>
+    <div class="app-desc">QuantiModo makes it easy to retrieve normalized user data from a wide array of devices and applications.\n[Learn about QuantiModo](https://app.quantimo.do) or contact us at [help.quantimo.do](https://help.quantimo.do).\n\n\n\n Create an account at [QuantiModo](https://app.quantimo.do), sign in, and\nadd\n\n\nsome data at https://app.quantimo.do/connect to try out the API for yourself.  As long as you're signed in, it will use your browser's cookie for authentication.  However, client applications must use OAuth2 tokens to access the API. for </div>
     
-    <div class="app-desc">Contact Info: <a href="hello@helloreverb.com">hello@helloreverb.com</a></div>
+    <div class="app-desc">Contact Info: <a href="yemaw@gelement.com">yemaw@gelement.com</a></div>
     <div class="app-desc">Version: 1.0.0</div>
-    <div class="license-info">All rights reserved</div>
-    <div class="license-url">http://apache.org/licenses/LICENSE-2.0.html</div>
+    <div class="license-info">MIT</div>
+    <div class="license-url">http://gelement.com</div>
   <h2>Access</h2>
   <div class="method-summary">Customize this message as you see fit!</div>
   <h2>Methods</h2>
@@ -207,7 +207,7 @@
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /correlations</code></pre></div>
     <div class="method-tags"> <span class="method-tag">Correlations</span></div>
     <div class="method-summary"><span class="nickname">correlationsGet</span> Get correlations</div>
-    <div class="method-notes">Get correlations</div>
+    <div class="method-notes">Get correlations.&lt;br&gt;Supported filter parameters:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;correlationCoefficient&lt;/b&gt; - Pearson correlation coefficient between cause and effect after lagging by onset delay and grouping by duration of action&lt;/li&gt;&lt;li&gt;&lt;b&gt;onsetDelay&lt;/b&gt; - The number of seconds which pass following a cause measurement before an effect would likely be observed.&lt;/li&gt;&lt;li&gt;&lt;b&gt;durationOfAction&lt;/b&gt; - The time in seconds over which the cause would be expected to exert a measurable effect. We have selected a default value for each variable. This default value may be replaced by a user specified by adjusting their variable user settings.&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastUpdated&lt;/b&gt; - The time that this measurement was last updated in the UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;/ul&gt;&lt;br&gt;</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
@@ -217,6 +217,15 @@
       <div class="param">cause (optional)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; ORIGINAL variable name of the cause variable for which the user desires correlations </div>
+      <div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div>
+      <div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div>
+      <div class="param">sort (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Sort by given field. If the field is prefixed with `-, it will sort in descending order. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -324,7 +333,7 @@
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /measurements</code></pre></div>
     <div class="method-tags"> <span class="method-tag">Measurements</span></div>
     <div class="method-summary"><span class="nickname">measurementsGet</span> Get measurements for this user</div>
-    <div class="method-notes">Measurements are any value that can be recorded like daily steps, a mood rating, or apples eaten.</div>
+    <div class="method-notes">Measurements are any value that can be recorded like daily steps, a mood rating, or apples eaten. &lt;br&gt;Supported filter parameters:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;value&lt;/b&gt; - Value of measurement&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastUpdated&lt;/b&gt; - The time that this measurement was created or last updated in the UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;/ul&gt;&lt;br&gt;</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
@@ -346,6 +355,15 @@
       <div class="param">groupingTimezone (optional)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The time (in seconds) over which measurements are grouped together </div>
+      <div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div>
+      <div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div>
+      <div class="param">sort (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Sort by given field. If the field is prefixed with `-, it will sort in descending order. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -424,28 +442,34 @@
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /oauth2/accesstoken</code></pre></div>
     <div class="method-tags"> <span class="method-tag">Oauth</span></div>
     <div class="method-summary"><span class="nickname">oauth2AccesstokenGet</span> Access Token</div>
-    <div class="method-notes">Client provides authorization token obtained from /api/oauth2/authorize to this endpoint and receives an access token. Access token can then</div>
+    <div class="method-notes">Client provides authorization token obtained from /api/oauth2/authorize to this endpoint and receives an access token. Access token can then be used to query different API endpoints of QuantiModo.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
-      <div class="param">responseType (required)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Response type </div>
-      <div class="param">redirectUri (required)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Redirect uri </div>
-      <div class="param">realm (required)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Realm </div>
       <div class="param">clientId (required)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Client id </div>
-      <div class="param">scope (required)</div>
+      <div class="param">clientSecret (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Client secret </div>
+      <div class="param">grantType (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Grant Type can be &#39;authorization_code&#39; or &#39;refresh_token&#39; </div>
+      <div class="param">responseType (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Response type </div>
+      <div class="param">scope (optional)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Scope </div>
-      <div class="param">state (required)</div>
+      <div class="param">redirectUri (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Redirect uri </div>
+      <div class="param">state (optional)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; State </div>
+      <div class="param">realm (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Realm </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -460,28 +484,31 @@
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /oauth2/authorize</code></pre></div>
     <div class="method-tags"> <span class="method-tag">Oauth</span></div>
     <div class="method-summary"><span class="nickname">oauth2AuthorizeGet</span> Authorize</div>
-    <div class="method-notes">Ask the user if they want to allow a client applications to submit or obtain data from their QM  account.</div>
+    <div class="method-notes">Ask the user if they want to allow a client applications to submit or obtain data from their QM account. It will redirect the user to the url provided by the client application with the code as a query parameter or error in case of an error.</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
       <div class="param">clientId (required)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; This is the unique ID that QuantiModo uses to identify your application. Obtain a client id by emailing info@quantimo.do. </div>
-      <div class="param">realm (required)</div>
+      <div class="param">clientSecret (required)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of the realm representing the users of your distributed applications and services. A \&quot;realm\&quot; attribute MAY be included to indicate the scope of protection. </div>
-      <div class="param">redirectUri (required)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The redirect URI is the URL within your client application that will receive the OAuth2 credentials. </div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; This is the secret for your obtained clietn_id. QuantiModo uses this to validate that only your application uses the client_id. </div>
       <div class="param">responseType (required)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; If the value is code, launches a Basic flow, requiring a POST to the token endpoint to obtain the tokens. If the value is token id_token or id_token token, launches an Implicit flow, requiring the use of Javascript at the redirect URI to retrieve tokens from the URI #fragment. </div>
       <div class="param">scope (required)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Scopes include basic, readmeasurements, and writemeasurements. The \&quot;basic\&quot; scope allows you to read user info (displayname, email, etc). The \&quot;readmeasurements\&quot; scope allows one to read a user&#39;s data. The \&quot;writemeasurements\&quot; scope allows you to write user data. Separate multiple scopes by a space. </div>
-      <div class="param">state (required)</div>
+      <div class="param">redirectUri (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The redirect URI is the URL within your client application that will receive the OAuth2 credentials. </div>
+      <div class="param">state (optional)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; An opaque string that is round-tripped in the protocol; that is to say, it is returned as a URI parameter in the Basic flow, and in the URI </div>
+      <div class="param">realm (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of the realm representing the users of your distributed applications and services. A \&quot;realm\&quot; attribute MAY be included to indicate the scope of protection. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -503,6 +530,9 @@
       <div class="param">cause (required)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Original variable name for the explanatory or independent variable </div>
+      <div class="param">effect (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Original variable name for the outcome or dependent variable </div>
       <div class="param">causeSource (optional)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of data source that the cause measurements should come from </div>
@@ -515,9 +545,6 @@
       <div class="param">duration (optional)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Duration of action (in seconds) from the cause variable settings. </div>
-      <div class="param">effect (required)</div>
-
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Original variable name for the outcome or dependent variable </div>
       <div class="param">effectSource (optional)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of data source that the effectmeasurements should come from </div>
@@ -530,6 +557,15 @@
       <div class="param">startTime (optional)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The earliest date (in epoch time) for which we should return measurements </div>
+      <div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div>
+      <div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div>
+      <div class="param">sort (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Sort by given field. If the field is prefixed with `-, it will sort in descending order. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -606,15 +642,35 @@
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
     <pre class="example"><code>{
+  &quot;parent&quot; : 123,
+  &quot;causeOnly&quot; : 123,
+  &quot;lastValue&quot; : 123,
+  &quot;sources&quot; : &quot;aeiou&quot;,
+  &quot;latestMeasurementTime&quot; : 123,
+  &quot;lastSource&quot; : 123,
+  &quot;numberOfCorrelations&quot; : 123,
+  &quot;earliestMeasurementTime&quot; : 123,
   &quot;originalName&quot; : &quot;aeiou&quot;,
   &quot;minimumValue&quot; : 3.149,
-  &quot;unit&quot; : &quot;aeiou&quot;,
-  &quot;sources&quot; : &quot;aeiou&quot;,
+  &quot;measurementsAtLastAnalysis&quot; : 123,
   &quot;fillingValue&quot; : 3.149,
-  &quot;name&quot; : &quot;aeiou&quot;,
   &quot;combinationOperation&quot; : &quot;aeiou&quot;,
+  &quot;mostCommonValue&quot; : 123,
+  &quot;id&quot; : 123,
+  &quot;outcome&quot; : 123,
+  &quot;subVariables&quot; : [ &quot;&quot; ],
+  &quot;joinWith&quot; : &quot;aeiou&quot;,
+  &quot;durationOfAction&quot; : 123,
+  &quot;joinedVariables&quot; : [ &quot;&quot; ],
+  &quot;mostCommonUnit&quot; : 123,
+  &quot;unit&quot; : &quot;aeiou&quot;,
+  &quot;name&quot; : &quot;aeiou&quot;,
+  &quot;lastUnit&quot; : 123,
   &quot;category&quot; : &quot;aeiou&quot;,
-  &quot;maximumValue&quot; : 3.149
+  &quot;onsetDelay&quot; : 123,
+  &quot;maximumValue&quot; : 3.149,
+  &quot;updated&quot; : 123,
+  &quot;numberOfMeasurements&quot; : 123
 }</code></pre>
     
   </div> <!-- method -->
@@ -634,6 +690,15 @@
       <div class="param">effectOrCause (optional)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Allows us to specify which column in the `correlations` table will be searched. Choices are effect or cause. </div>
+      <div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div>
+      <div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div>
+      <div class="param">sort (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Sort by given field. If the field is prefixed with `-, it will sort in descending order. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -644,15 +709,35 @@
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
     <pre class="example"><code>{
+  &quot;parent&quot; : 123,
+  &quot;causeOnly&quot; : 123,
+  &quot;lastValue&quot; : 123,
+  &quot;sources&quot; : &quot;aeiou&quot;,
+  &quot;latestMeasurementTime&quot; : 123,
+  &quot;lastSource&quot; : 123,
+  &quot;numberOfCorrelations&quot; : 123,
+  &quot;earliestMeasurementTime&quot; : 123,
   &quot;originalName&quot; : &quot;aeiou&quot;,
   &quot;minimumValue&quot; : 3.149,
-  &quot;unit&quot; : &quot;aeiou&quot;,
-  &quot;sources&quot; : &quot;aeiou&quot;,
+  &quot;measurementsAtLastAnalysis&quot; : 123,
   &quot;fillingValue&quot; : 3.149,
-  &quot;name&quot; : &quot;aeiou&quot;,
   &quot;combinationOperation&quot; : &quot;aeiou&quot;,
+  &quot;mostCommonValue&quot; : 123,
+  &quot;id&quot; : 123,
+  &quot;outcome&quot; : 123,
+  &quot;subVariables&quot; : [ &quot;&quot; ],
+  &quot;joinWith&quot; : &quot;aeiou&quot;,
+  &quot;durationOfAction&quot; : 123,
+  &quot;joinedVariables&quot; : [ &quot;&quot; ],
+  &quot;mostCommonUnit&quot; : 123,
+  &quot;unit&quot; : &quot;aeiou&quot;,
+  &quot;name&quot; : &quot;aeiou&quot;,
+  &quot;lastUnit&quot; : 123,
   &quot;category&quot; : &quot;aeiou&quot;,
-  &quot;maximumValue&quot; : 3.149
+  &quot;onsetDelay&quot; : 123,
+  &quot;maximumValue&quot; : 3.149,
+  &quot;updated&quot; : 123,
+  &quot;numberOfMeasurements&quot; : 123
 }</code></pre>
     
   </div> <!-- method -->
@@ -724,6 +809,50 @@
   <hr>
   
   <div class="method">
+    <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /unitsVariable</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Units</span></div>
+    <div class="method-summary"><span class="nickname">unitsVariableGet</span> Units for Variable</div>
+    <div class="method-notes">Get a list of all possible units to use for a given variable</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">unitName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of Unit you want to retrieve </div>
+      <div class="param">abbreviatedUnitName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Abbreviated Unit Name of the unit you want </div>
+      <div class="param">categoryName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of the category you want units for </div>
+      <div class="param">variable (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of the variable you want units for </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#array">array[Unit]</a></div>
+
+    
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>[ {
+  &quot;name&quot; : &quot;aeiou&quot;,
+  &quot;maximum&quot; : 3.149,
+  &quot;category&quot; : &quot;aeiou&quot;,
+  &quot;abbreviatedName&quot; : &quot;aeiou&quot;,
+  &quot;minimum&quot; : 3.149,
+  &quot;conversionSteps&quot; : [ {
+    &quot;operation&quot; : &quot;aeiou&quot;,
+    &quot;value&quot; : 3.149
+  } ]
+} ]</code></pre>
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /user/me</code></pre></div>
     <div class="method-tags"> <span class="method-tag">User</span></div>
     <div class="method-summary"><span class="nickname">userMeGet</span> Get all available units for variableGet authenticated user</div>
@@ -761,7 +890,7 @@
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
-      <div class="param">t (required)</div>
+      <div class="param">t (optional)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; User token </div>
       
@@ -929,25 +1058,15 @@
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
 
-    <div class="return-type"><a href="#array">array[Correlation]</a></div>
+    <div class="return-type"><a href="#array">array[CommonResponse]</a></div>
 
     
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
     <pre class="example"><code>[ {
-  &quot;correlationCoefficient&quot; : 1.3579000000000001069366817318950779736042022705078125,
-  &quot;durationOfAction&quot; : 1.3579000000000001069366817318950779736042022705078125,
-  &quot;cause&quot; : &quot;aeiou&quot;,
-  &quot;numberOfPairs&quot; : 1.3579000000000001069366817318950779736042022705078125,
-  &quot;causalityFactor&quot; : 1.3579000000000001069366817318950779736042022705078125,
-  &quot;effectCategory&quot; : &quot;aeiou&quot;,
-  &quot;statisticalSignificance&quot; : &quot;aeiou&quot;,
-  &quot;effectSize&quot; : &quot;aeiou&quot;,
-  &quot;effect&quot; : &quot;aeiou&quot;,
-  &quot;onsetDelay&quot; : 3.149,
-  &quot;causeCategory&quot; : &quot;aeiou&quot;,
-  &quot;reverseCorrelation&quot; : 1.3579000000000001069366817318950779736042022705078125,
-  &quot;timestamp&quot; : 1.3579000000000001069366817318950779736042022705078125
+  &quot;success&quot; : true,
+  &quot;message&quot; : &quot;aeiou&quot;,
+  &quot;status&quot; : 123
 } ]</code></pre>
     
   </div> <!-- method -->
@@ -1110,9 +1229,76 @@
   <hr>
   
   <div class="method">
+    <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /v1/votes</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Correlations</span><span class="method-tag">Votes</span></div>
+    <div class="method-summary"><span class="nickname">v1VotesPost</span> Post or update vote</div>
+    <div class="method-notes">This is to enable users to indicate their opinion on the plausibility of a causal relationship between a treatment and outcome. QuantiModo incorporates crowd-sourced plausibility estimations into their algorithm. This is done allowing user to indicate their view of the plausibility of each relationship with thumbs up/down buttons placed next to each prediction.</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">cause (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Cause variable name </div>
+      <div class="param">effect (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Effect variable name </div>
+      <div class="param">vote (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Vote: 0 (for implausible) or 1 (for plausible) </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#">CommonResponse</a></div>
+
+    
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  &quot;success&quot; : true,
+  &quot;message&quot; : &quot;aeiou&quot;,
+  &quot;status&quot; : 123
+}</code></pre>
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
+    <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /v1/votes/delete</code></pre></div>
+    <div class="method-tags"> <span class="method-tag">Correlations</span><span class="method-tag">Votes</span></div>
+    <div class="method-summary"><span class="nickname">v1VotesDeletePost</span> Delete vote</div>
+    <div class="method-notes">Delete previously posted vote</div>
+
+    <h3 class="field-label">Parameters</h3>
+    <div class="field-items">
+      <div class="param">cause (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Cause variable name </div>
+      <div class="param">effect (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Effect variable name </div>
+      
+    </div>  <!-- field-items -->
+    <h3 class="field-label">Return type</h3>
+
+    <div class="return-type"><a href="#">CommonResponse</a></div>
+
+    
+    <h3 class="field-label">Example data</h3>
+    <div class="example-data-content-type">Content-Type: application/json</div>
+    <pre class="example"><code>{
+  &quot;success&quot; : true,
+  &quot;message&quot; : &quot;aeiou&quot;,
+  &quot;status&quot; : 123
+}</code></pre>
+    
+  </div> <!-- method -->
+  <hr>
+  
+  <div class="method">
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /variableCategories</code></pre></div>
     <div class="method-tags"> <span class="method-tag">Variables</span></div>
-    <div class="method-summary"><span class="nickname">variableCategoriesGet</span> Get variable categories</div>
+    <div class="method-summary"><span class="nickname">variableCategoriesGet</span> Variable categories</div>
     <div class="method-notes">The variable categories include Activity, Causes of Illness, Cognitive Performance, Conditions, Environment, Foods, Location, Miscellaneous, Mood, Nutrition, Physical Activity, Physique, Sleep, Social Interactions, Symptoms, Treatments, Vital Signs, and Work.</div>
 
     <h3 class="field-label">Parameters</h3>
@@ -1158,16 +1344,25 @@
     <div class="method-path"><pre class="get"><code class="huge"><span>get</span>: /variables</code></pre></div>
     <div class="method-tags"> <span class="method-tag">Variables</span></div>
     <div class="method-summary"><span class="nickname">variablesGet</span> Get variables by the category name</div>
-    <div class="method-notes">Get variables by the category name</div>
+    <div class="method-notes">Get variables by the category name. &lt;br&gt;Supported filter parameters:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;name&lt;/b&gt; - Original name of the variable (supports exact name match only)&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastUpdated&lt;/b&gt; - Filter by the last time any of the properties of the variable were changed. Uses UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;li&gt;&lt;b&gt;source&lt;/b&gt; - The name of the data source that created the variable (supports exact name match only). So if you have a client application and you only want variables that were last updated by your app, you can include the name of your app here&lt;/li&gt;&lt;li&gt;&lt;b&gt;latestMeasurementTime&lt;/b&gt; - Filter variables based on the last time a measurement for them was created or updated in the UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;li&gt;&lt;b&gt;numberOfMeasurements&lt;/b&gt; - Filter variables by the total number of measurements that they have. This could be used of you want to filter or sort by popularity.&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastSource&lt;/b&gt; - Limit variables to those which measurements were last submitted by a specific source. So if you have a client application and you only want variables that were last updated by your app, you can include the name of your app here. (supports exact name match only)&lt;/li&gt;&lt;/ul&gt;&lt;br&gt;</div>
 
     <h3 class="field-label">Parameters</h3>
     <div class="field-items">
       <div class="param">userId (optional)</div>
 
       <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; User id </div>
-      <div class="param">categoryName (optional)</div>
+      <div class="param">category (optional)</div>
 
-      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Category name </div>
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Filter data by category </div>
+      <div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div>
+      <div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div>
+      <div class="param">sort (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Sort by given field. If the field is prefixed with `-, it will sort in descending order. </div>
       
     </div>  <!-- field-items -->
     <h3 class="field-label">Return type</h3>
@@ -1178,15 +1373,35 @@
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
     <pre class="example"><code>{
+  &quot;parent&quot; : 123,
+  &quot;causeOnly&quot; : 123,
+  &quot;lastValue&quot; : 123,
+  &quot;sources&quot; : &quot;aeiou&quot;,
+  &quot;latestMeasurementTime&quot; : 123,
+  &quot;lastSource&quot; : 123,
+  &quot;numberOfCorrelations&quot; : 123,
+  &quot;earliestMeasurementTime&quot; : 123,
   &quot;originalName&quot; : &quot;aeiou&quot;,
   &quot;minimumValue&quot; : 3.149,
-  &quot;unit&quot; : &quot;aeiou&quot;,
-  &quot;sources&quot; : &quot;aeiou&quot;,
+  &quot;measurementsAtLastAnalysis&quot; : 123,
   &quot;fillingValue&quot; : 3.149,
-  &quot;name&quot; : &quot;aeiou&quot;,
   &quot;combinationOperation&quot; : &quot;aeiou&quot;,
+  &quot;mostCommonValue&quot; : 123,
+  &quot;id&quot; : 123,
+  &quot;outcome&quot; : 123,
+  &quot;subVariables&quot; : [ &quot;&quot; ],
+  &quot;joinWith&quot; : &quot;aeiou&quot;,
+  &quot;durationOfAction&quot; : 123,
+  &quot;joinedVariables&quot; : [ &quot;&quot; ],
+  &quot;mostCommonUnit&quot; : 123,
+  &quot;unit&quot; : &quot;aeiou&quot;,
+  &quot;name&quot; : &quot;aeiou&quot;,
+  &quot;lastUnit&quot; : 123,
   &quot;category&quot; : &quot;aeiou&quot;,
-  &quot;maximumValue&quot; : 3.149
+  &quot;onsetDelay&quot; : 123,
+  &quot;maximumValue&quot; : 3.149,
+  &quot;updated&quot; : 123,
+  &quot;numberOfMeasurements&quot; : 123
 }</code></pre>
     
   </div> <!-- method -->
@@ -1195,7 +1410,7 @@
   <div class="method">
     <div class="method-path"><pre class="post"><code class="huge"><span>post</span>: /variables</code></pre></div>
     <div class="method-tags"> <span class="method-tag">Variables</span></div>
-    <div class="method-summary"><span class="nickname">variablesPost</span> Set variable</div>
+    <div class="method-summary"><span class="nickname">variablesPost</span> Create Variables</div>
     <div class="method-notes">Allows the client to create a new variable in the `variables` table.</div>
 
     <h3 class="field-label">Parameters</h3>
@@ -1246,15 +1461,35 @@
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
     <pre class="example"><code>[ {
+  &quot;parent&quot; : 123,
+  &quot;causeOnly&quot; : 123,
+  &quot;lastValue&quot; : 123,
+  &quot;sources&quot; : &quot;aeiou&quot;,
+  &quot;latestMeasurementTime&quot; : 123,
+  &quot;lastSource&quot; : 123,
+  &quot;numberOfCorrelations&quot; : 123,
+  &quot;earliestMeasurementTime&quot; : 123,
   &quot;originalName&quot; : &quot;aeiou&quot;,
   &quot;minimumValue&quot; : 3.149,
-  &quot;unit&quot; : &quot;aeiou&quot;,
-  &quot;sources&quot; : &quot;aeiou&quot;,
+  &quot;measurementsAtLastAnalysis&quot; : 123,
   &quot;fillingValue&quot; : 3.149,
-  &quot;name&quot; : &quot;aeiou&quot;,
   &quot;combinationOperation&quot; : &quot;aeiou&quot;,
+  &quot;mostCommonValue&quot; : 123,
+  &quot;id&quot; : 123,
+  &quot;outcome&quot; : 123,
+  &quot;subVariables&quot; : [ &quot;&quot; ],
+  &quot;joinWith&quot; : &quot;aeiou&quot;,
+  &quot;durationOfAction&quot; : 123,
+  &quot;joinedVariables&quot; : [ &quot;&quot; ],
+  &quot;mostCommonUnit&quot; : 123,
+  &quot;unit&quot; : &quot;aeiou&quot;,
+  &quot;name&quot; : &quot;aeiou&quot;,
+  &quot;lastUnit&quot; : 123,
   &quot;category&quot; : &quot;aeiou&quot;,
-  &quot;maximumValue&quot; : 3.149
+  &quot;onsetDelay&quot; : 123,
+  &quot;maximumValue&quot; : 3.149,
+  &quot;updated&quot; : 123,
+  &quot;numberOfMeasurements&quot; : 123
 } ]</code></pre>
     
   </div> <!-- method -->
@@ -1281,15 +1516,35 @@
     <h3 class="field-label">Example data</h3>
     <div class="example-data-content-type">Content-Type: application/json</div>
     <pre class="example"><code>{
+  &quot;parent&quot; : 123,
+  &quot;causeOnly&quot; : 123,
+  &quot;lastValue&quot; : 123,
+  &quot;sources&quot; : &quot;aeiou&quot;,
+  &quot;latestMeasurementTime&quot; : 123,
+  &quot;lastSource&quot; : 123,
+  &quot;numberOfCorrelations&quot; : 123,
+  &quot;earliestMeasurementTime&quot; : 123,
   &quot;originalName&quot; : &quot;aeiou&quot;,
   &quot;minimumValue&quot; : 3.149,
-  &quot;unit&quot; : &quot;aeiou&quot;,
-  &quot;sources&quot; : &quot;aeiou&quot;,
+  &quot;measurementsAtLastAnalysis&quot; : 123,
   &quot;fillingValue&quot; : 3.149,
-  &quot;name&quot; : &quot;aeiou&quot;,
   &quot;combinationOperation&quot; : &quot;aeiou&quot;,
+  &quot;mostCommonValue&quot; : 123,
+  &quot;id&quot; : 123,
+  &quot;outcome&quot; : 123,
+  &quot;subVariables&quot; : [ &quot;&quot; ],
+  &quot;joinWith&quot; : &quot;aeiou&quot;,
+  &quot;durationOfAction&quot; : 123,
+  &quot;joinedVariables&quot; : [ &quot;&quot; ],
+  &quot;mostCommonUnit&quot; : 123,
+  &quot;unit&quot; : &quot;aeiou&quot;,
+  &quot;name&quot; : &quot;aeiou&quot;,
+  &quot;lastUnit&quot; : 123,
   &quot;category&quot; : &quot;aeiou&quot;,
-  &quot;maximumValue&quot; : 3.149
+  &quot;onsetDelay&quot; : 123,
+  &quot;maximumValue&quot; : 3.149,
+  &quot;updated&quot; : 123,
+  &quot;numberOfMeasurements&quot; : 123
 }</code></pre>
     
   </div> <!-- method -->
@@ -1298,6 +1553,18 @@
   
 
   <h2>Models</h2>
+  
+  
+  <div class="model">
+    <h3 class="field-label"><a name="CommonResponse">CommonResponse</a></h3>
+    <div class="field-items">
+      <div class="param">status </div><div class="param-desc"><span class="param-type">Integer</span> Status code</div>
+      <div class="param">message </div><div class="param-desc"><span class="param-type">String</span> Message</div>
+      <div class="param">success </div><div class="param-desc"><span class="param-type">Boolean</span> </div>
+      
+    </div>  <!-- field-items -->
+  </div>
+  
   
   
   <div class="model">
@@ -1566,6 +1833,7 @@
   <div class="model">
     <h3 class="field-label"><a name="Variable">Variable</a></h3>
     <div class="field-items">
+      <div class="param">id </div><div class="param-desc"><span class="param-type">Integer</span> Variable ID</div>
       <div class="param">name </div><div class="param-desc"><span class="param-type">String</span> User-defined variable display name.</div>
       <div class="param">originalName </div><div class="param-desc"><span class="param-type">String</span> Name used when the variable was originally created in the `variables` table.</div>
       <div class="param">category </div><div class="param-desc"><span class="param-type">String</span> Variable category like Mood, Sleep, Physical Activity, Treatment, Symptom, etc.</div>
@@ -1575,6 +1843,25 @@
       <div class="param">maximumValue </div><div class="param-desc"><span class="param-type">Double</span> Maximum reasonable value for this variable (uses default unit)</div>
       <div class="param">combinationOperation </div><div class="param-desc"><span class="param-type">String</span> How to aggregate measurements over time.</div>
       <div class="param">fillingValue </div><div class="param-desc"><span class="param-type">Double</span> Value for replacing null measurements</div>
+      <div class="param">joinWith </div><div class="param-desc"><span class="param-type">String</span> The Variable this Variable should be joined with. If the variable is joined with some other variable then it is not shown to user in the list of variables.</div>
+      <div class="param">joinedVariables </div><div class="param-desc"><span class="param-type">array[Variable]</span> Array of Variables that are joined with this Variable</div>
+      <div class="param">parent </div><div class="param-desc"><span class="param-type">Integer</span> Id of the parent variable if this variable has any parent</div>
+      <div class="param">subVariables </div><div class="param-desc"><span class="param-type">array[Variable]</span> Array of Variables that are sub variables to this Variable</div>
+      <div class="param">onsetDelay </div><div class="param-desc"><span class="param-type">Integer</span> How long it takes for a measurement in this variable to take effect</div>
+      <div class="param">durationOfAction </div><div class="param-desc"><span class="param-type">Integer</span> How long the effect of a measurement in this variable lasts</div>
+      <div class="param">earliestMeasurementTime </div><div class="param-desc"><span class="param-type">Integer</span> Earliest measurement time</div>
+      <div class="param">latestMeasurementTime </div><div class="param-desc"><span class="param-type">Integer</span> Latest measurement time</div>
+      <div class="param">updated </div><div class="param-desc"><span class="param-type">Integer</span> When this variable or its settings were last updated</div>
+      <div class="param">causeOnly </div><div class="param-desc"><span class="param-type">Integer</span> A value of 1 indicates that this variable is generally a cause in a causal relationship.  An example of a causeOnly variable would be a variable such as Cloud Cover which would generally not be influenced by the behaviour of the user.</div>
+      <div class="param">numberOfCorrelations </div><div class="param-desc"><span class="param-type">Integer</span> Number of correlations</div>
+      <div class="param">outcome </div><div class="param-desc"><span class="param-type">Integer</span> Outcome variables (those with `outcome` == 1) are variables for which a human would generally want to identify the influencing factors.  These include symptoms of illness, physique, mood, cognitive performance, etc.  Generally correlation calculations are only performed on outcome variables.</div>
+      <div class="param">measurementsAtLastAnalysis </div><div class="param-desc"><span class="param-type">Integer</span> The number of measurements that a given user had for this variable the last time a correlation calculation was performed. Generally correlation values are only updated once the current number of measurements for a variable is more than 10% greater than the measurementsAtLastAnalysis.  This avoids a computationally-demanding recalculation when there&#39;s not enough new data to make a significant difference in the correlation.</div>
+      <div class="param">numberOfMeasurements </div><div class="param-desc"><span class="param-type">Integer</span> Number of measurements</div>
+      <div class="param">lastUnit </div><div class="param-desc"><span class="param-type">Integer</span> Last unit</div>
+      <div class="param">lastValue </div><div class="param-desc"><span class="param-type">Integer</span> Last value</div>
+      <div class="param">mostCommonValue </div><div class="param-desc"><span class="param-type">Integer</span> Most common value</div>
+      <div class="param">mostCommonUnit </div><div class="param-desc"><span class="param-type">Integer</span> Most common unit</div>
+      <div class="param">lastSource </div><div class="param-desc"><span class="param-type">Integer</span> Last source</div>
       
     </div>  <!-- field-items -->
   </div>

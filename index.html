@@ -169,12 +169,12 @@ code {
   </head>
   <body>
   <h1>QuantiModo</h1>
-    <div class="app-desc">QuantiModo makes it easy to retrieve normalized user data from a wide array of devices and applications.\n[Learn about QuantiModo](https://app.quantimo.do) or contact us at [help.quantimo.do](https://help.quantimo.do).\n\n Create an account at [QuantiModo](https://app.quantimo.do), sign in, and add\n\nsome data at https://app.quantimo.do/connect to try out the API for yourself.  As long as you're signed in, it will use your browser's cookie for authentication.  However, client applications must use OAuth2 tokens to access the API.</div>
+    <div class="app-desc">Welcome to QuantiModo API!\nQuantiModo makes it easy to retrieve normalized user data from a wide array of devices and applications. [Learn about QuantiModo](https://app.quantimo.do) or contact us at <api@quantimo.do>.\n\n\n\n Before you get started, you will need to:\n\n\n\n * Ceate an account at [QuantiModo](https://app.quantimo.do)\n\n\n\n * Sign in, and add some data at\n[https://app.quantimo.do/connect](https://app.quantimo.do/connect) to try out the API for yourself\n\n\n\n * As long as you're signed in, it will use your browser's cookie for\nauthentication.  However, client applications must use OAuth2 tokens to access the API.\n\n\n## Oauth2 Authentication\nAfter receiving your `client_id` and `client_secret` by emailing at <info@quantimo.do> you can implement OAuth2 authentication to your application using our [OAuth2](#!/oauth2) endpoints.\n### Request Authorization Code\nBasically you need to redirect users to `/api/v1/oauth2/authorize` endpoint to get an authorization code with following parameters:\n* `client_id` This is the unique ID that QuantiModo uses to identify your application.\n* `scope` Scopes include basic, readmeasurements, and writemeasurements. The `basic` scope allows you to read user info (displayname, email, etc). The `readmeasurements` scope allows one to read a user's data. The `writemeasurements` scope allows you to write user data. Separate multiple scopes by a space.\n* `redirect_uri` The redirect URI is the URL within your client application that will receive the OAuth2 credentials.\n* `state` An opaque string that is round-tripped in the protocol; that is to say, it is returned as a URI parameter in the Basic flow, and in the URI.\n* `response_type` If the value is code, launches a Basic flow, requiring a POST to the token endpoint to obtain the tokens. If the value is token id_token or id_token token, launches an Implicit flow, requiring the use of Javascript at the redirect URI to retrieve tokens from the URI #fragment.\n\n\n### Request Access Token\nAfter user approves your access to the given scope, you'll recevive an authorization code to request an access token. This time make a `POST` request to `/api/v1/oauth2/token` with parameters including:\n* `grant_type` Can be `authorization_code` or `refresh_token` since we are getting the `access_token` for the first time we don't have a `refresh_token` so this must be `authorization_code`.\n* `client_id` The client id you used to receive an `authorization_code`.\n* `client_secret` Your client secret which you received with the client id.\n* `code` Authorization code you received with the previous request.\n* `redirect_uri` Your application's redirect url.\n\n\n### Refreshing Access Token\nAccess tokens expire at some point, to continue using our api you need to refresh them with `refresh_token` you received along with the `access_token`. To do this make a `POST` request to `/api/v1/oauth2/token` with correct parameters, which are:\n* `grant_type` This time grant type must be `refresh_token` since we have it.\n* `client_id` Your application's client id.\n* `client_secret` Your application's client secret.\n* `refresh_token` The refresh token you received with the `access_token`.\n\n\nEvery request you make to this endpoint will give you a new refresh token and make the old one expired. So you can keep getting new access tokens with new refresh tokens.\n\n\nYou can read more about OAuth2 from [here](http://oauth.net/2/)\n## Example Queries\n### Query Options\nThe standard query options for QuantiModo API are as described in the table below.\nThese are the available query options in QuantiModo API:\n<table>\n\n  <tr>\n\n    <th>Parameter</th>\n\n    <th>Description</th>\n\n  </tr>\n\n  <tr>\n\n    <td>limit</td>\n\n    <td>The LIMIT is used to limit the number of results returned. So if you\nhave 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. The maximum limit is 200 records.</td>\n\n  </tr>\n\n  <tr>\n\n    <td>offset</td>\n\n    <td>Suppose you wanted to show results 11-20. You'd set the offset to 10\nand the limit to 10.</td>\n\n  </tr>\n\n  <tr>\n\n    <td>sort</td>\n\n    <td>Sort by given field. If the field is prefixed with '-', it will sort\nin descending order.</td>\n\n  </tr>\n\n</table>\n### Pagination Conventions\nSince the maximum limit is 200 records, to get more than that you'll have to make multiple API calls and page through the results. To retrieve all the data, you can iterate through data by using the `limit` and `offset` query parameters.\nFor example, if you want to retrieve data from 61-80 then you can use a query with the following parameters,\n\n\n\n `/v1/variables?limit=20&offset=60`\n\n\n\nGenerally, youll be retrieving new or updated user data.  To avoid unnecessary API calls, youll want to store your last refresh time locally.  Initially, it should be set to 0.  Then whenever you make a request to get new data, you should limit the returned results to those updated since your last refresh by appending append\n\n\n\n `?lastUpdated=(ge)\"2013-01-D01T01:01:01\"`\n\n\n\nto your request.\n\n\n\n Also for better pagination, you can get link to the records of first, last,\nnext and previous page from response headers:\n\n\n\n * `Total-Count` - Total number of results for given query\n\n\n\n * `Link-First` - Link to get first page records\n\n\n\n * `Link-Last` - Link to get last page records\n\n\n\n * `Link-Prev` - Link to get previous records set\n\n\n\n * `Link-Next` - Link to get next records set\n\n\n\n\n\nRemember, response header will be only sent when the record set is available. e.g. You will not get a ```Link-Last``` & ```Link-Next``` when you query for the last page.\n### Sorting Results\nTo get data sorted by particular field:\n\n\n\n `/v1/variables?sort=lastUpdated`\n\n\n\nIt will sort data in ascending order. For descending order, you can add '-' prefix before field like:\n\n\n\n `/v1/variables?sort=-lastUpdated`\n\n\n\n### Filter Parameters\nAlso, many endpoints support various filter parameters. You can filter out your result by specifying filter parameter.\nFor example, to get all variables within the \"Mood\" category, you would use:\n\n\n\n `/v1/variables?category=Mood`\n\n\n\nHere is the complete list of filter parameters by endpoints:\n#### /v1/correlations\n<table>\n\n  <tr>\n\n    <th>Parameter</th>\n\n    <th>Description</th>\n\n  </tr>\n\n  <tr>\n\n    <td>cause</td>\n\n    <td>Original variable name of the hypothetical cause (a.k.a. explanatory\nor independent variable) for which the user desires correlations</td>\n\n  </tr>\n\n  <tr>\n\n    <td>effect</td>\n\n    <td>Original variable name of the hypothetical effect (a.k.a. outcome or\ndependent variable) for which the user desires correlations</td>\n\n  </tr>\n\n  <tr>\n\n    <td>correlationCoefficient</td>\n\n    <td>Pearson correlation coefficient between cause and effect after\nlagging by onset delay and grouping by duration of action</td>\n\n  </tr>\n\n  <tr>\n\n    <td>onsetDelay</td>\n\n    <td>The number of seconds which pass following a cause measurement before\nan effect would likely be observed.</td>\n\n  </tr>\n\n  <tr>\n\n    <td>durationOfAction</td>\n\n    <td>The time in seconds over which the cause would be expected to exert\na measurable effect. We have selected a default value for each variable. This default value may be replaced by a user specified by adjusting their variable user settings.</td>\n\n  </tr>\n\n  <tr>\n\n    <td>lastUpdated</td>\n\n    <td>The time that this measurement was last updated in the UTC format\n\"YYYY-MM-DDThh:mm:ss\"</td>\n\n  </tr>\n\n</table>\n#### /v1/measurements\n<table>\n\n  <tr>\n\n    <th>Parameter</th>\n\n    <th>Description</th>\n\n  </tr>\n\n  <tr>\n\n    <td>variableName</td>\n\n    <td>Name of the variable you want measurements for (supports exact name\nmatch only)</td>\n\n  </tr>\n\n  <tr>\n\n    <td>source</td>\n\n    <td>Name of the source you want measurements for (supports exact name\nmatch only)</td>\n\n  </tr>\n\n  <tr>\n\n    <td>value</td>\n\n    <td>Value of measurement</td>\n\n  </tr>\n\n  <tr>\n\n    <td>lastUpdated</td>\n\n    <td>The time that this measurement was created or last updated in the UTC\nformat \"YYYY-MM-DDThh:mm:ss\"</td>\n\n  </tr>\n\n</table>\n#### /v1/units\n<table>\n\n  <tr>\n\n    <th>Parameter</th>\n\n    <th>Description</th>\n\n  </tr>\n\n  <tr>\n\n    <td>unitName</td>\n\n    <td>Unit Name (supports exact name match only)</td>\n\n  </tr>\n\n  <tr>\n\n    <td>abbreviatedUnitName</td>\n\n    <td>Restrict the results to a specific unit by providing the unit\nabbreviation (supports exact name match only)</td>\n\n  </tr>\n\n  <tr>\n\n    <td>categoryName</td>\n\n    <td>Restrict the results to a specific unit category by providing the\nunit category name.</td>\n\n  </tr>\n\n</table>\n#### /v1/variables\n<table>\n\n  <tr>\n\n    <th>Parameter</th>\n\n    <th>Description</th>\n\n  </tr>\n\n  <tr>\n\n    <td>category</td>\n\n    <td>Restrict the results to a specific category by providing the variable\ncategory name such as \"Nutrients\" or \"Physique\". A complete list of variable categories can be obtained at the /variableCategories endpoint.</td>\n\n  </tr>\n\n  <tr>\n\n    <td>name</td>\n\n    <td>Original name of the variable (supports exact name match only)</td>\n\n  </tr>\n\n  <tr>\n\n    <td>lastUpdated</td>\n\n    <td>Filter by the last time any of the properties of the variable were\nchanged. Uses UTC format \"YYYY-MM-DDThh:mm:ss\"</td>\n\n  </tr>\n\n  <tr>\n\n    <td>source</td>\n\n    <td>The name of the data source that created the variable (supports exact\nname match only). So if you have a client application and you only want variables that were last updated by your app, you can include the name of your app here</td>\n\n  </tr>\n\n  <tr>\n\n    <td>latestMeasurementTime</td>\n\n    <td>Filter variables based on the last time a measurement for them was\ncreated or updated in the UTC format \"YYYY-MM-DDThh:mm:ss\"</td>\n\n  </tr>\n\n  <tr>\n\n    <td>numberOfMeasurements</td>\n\n    <td>Filter variables by the total number of measurements that they have.\nThis could be used of you want to filter or sort by popularity.</td>\n\n  </tr>\n\n  <tr>\n\n    <td>lastSource</td>\n\n    <td>Limit variables to those which measurements were last submitted by\na specific source. So if you have a client application and you only want variables that were last updated by your app, you can include the name of your app here. (supports exact name match only)</td>\n\n  </tr>\n\n</table>\n#### Filter operators support\nAPI supports the following operators with filter parameters:\n#### Comparison operators\nComparison operators allow you to limit results to those greater than, less than, or equal to a specified value for a specified attribute.   These operators can be used with strings, numbers, and dates.\nThe following comparison operators are available:\n* `gt` for `greater than` comparison\n* `ge` for `greater than or equal` comparison\n* `lt` for `less than` comparison, e.g\n* `le` for `less than or equal` comparison\n\n\nThey are included in queries using the following format:\n\n\n\n `(<operator>)<value>`\n\n\n\nFor example, in order to filter value which is greater than 21, the following query parameter should be used:\n\n\n\n `?value=(gt)21`\n\n\n\n#### Equals/In Operators\nIt also allows filtering by the exact value of an attribute or by a set of values, depending on the type of value passed as a query parameter. If the value contains commas, the parameter is split on commas and used as array input for `IN` filtering, otherwise the exact match is applied.\nIn order to only show records which have the value 42, the following query should be used:\n\n\n\n `?value=42`\n\n\n\nIn order to filter records which have value 42 or 43, the following query should be used:\n\n\n\n `?value=42,43`\n\n\n\n#### Like operators\nLike operators allow filtering using `LIKE` query. This operator is triggered if exact match operator is used, but value contains `%` sign as the first or last character.\nIn order to filter records which category that start with `Food`, the following query should be used:\n\n\n\n `?category=Food%`\n\n\n\n#### Negation operator\nIt is possible to get negated results of a query by prefixed the operator with `!`.\nSome examples:\n\n\n\n `//filter records except those with value are not 42 or 43`<br>\n\n `?value=!42,43`\n\n\n\n `//filter records with value not greater than 21`<br>\n\n `?value=!(ge)21`\n\n\n\n#### Multiple constraints for single attribute\nIt is possible to apply multiple constraints by providing an array of query filters:\n\n\n\n `// filter all records which value is greater than 20.2 and less than\n20.3`<br>\n`?value[]=(gt)20.2&value[]=(lt)20.3`\n`// filter all records which value is greater than 20.2 and less than 20.3 but not 20.2778`<br> `?value[]=(gt)20.2&value[]=(lt)20.3&value[]=!20.2778`\n\n\n<br></div>
     
-    <div class="app-desc">Contact Info: <a href="stakeholder_services@nyiso.com">stakeholder_services@nyiso.com</a></div>
+    <div class="app-desc">Contact Info: <a href="werocks@isi.nc">werocks@isi.nc</a></div>
     <div class="app-desc">Version: 1.0.0</div>
-    <div class="license-info">All rights reserved</div>
-    <div class="license-url">http://apache.org/licenses/LICENSE-2.0.html</div>
+    <div class="license-info">Creative Commons 4.0 International</div>
+    <div class="license-url">http://creativecommons.org/licenses/by/4.0/</div>
   <h2>Access</h2>
   
 
@@ -189,40 +189,6 @@ code {
   
   
   
-  <li><a href="#correlationsGet"><code><span class="http-method">get</span> /correlations</code></a></li>
-  
-  <li><a href="#correlationsPost"><code><span class="http-method">post</span> /correlations</code></a></li>
-  
-  <li><a href="#measurementSourcesGet"><code><span class="http-method">get</span> /measurementSources</code></a></li>
-  
-  <li><a href="#measurementSourcesPost"><code><span class="http-method">post</span> /measurementSources</code></a></li>
-  
-  <li><a href="#measurementsGet"><code><span class="http-method">get</span> /measurements</code></a></li>
-  
-  <li><a href="#measurementsV2Post"><code><span class="http-method">post</span> /measurements/v2</code></a></li>
-  
-  <li><a href="#measurementsRangeGet"><code><span class="http-method">get</span> /measurementsRange</code></a></li>
-  
-  <li><a href="#oauth2AccesstokenGet"><code><span class="http-method">get</span> /oauth2/accesstoken</code></a></li>
-  
-  <li><a href="#oauth2AuthorizeGet"><code><span class="http-method">get</span> /oauth2/authorize</code></a></li>
-  
-  <li><a href="#pairsGet"><code><span class="http-method">get</span> /pairs</code></a></li>
-  
-  <li><a href="#publicCorrelationsSearchSearchGet"><code><span class="http-method">get</span> /public/correlations/search/{search}</code></a></li>
-  
-  <li><a href="#publicVariablesGet"><code><span class="http-method">get</span> /public/variables</code></a></li>
-  
-  <li><a href="#publicVariablesSearchSearchGet"><code><span class="http-method">get</span> /public/variables/search/{search}</code></a></li>
-  
-  <li><a href="#unitCategoriesGet"><code><span class="http-method">get</span> /unitCategories</code></a></li>
-  
-  <li><a href="#unitsGet"><code><span class="http-method">get</span> /units</code></a></li>
-  
-  <li><a href="#unitsVariableGet"><code><span class="http-method">get</span> /unitsVariable</code></a></li>
-  
-  <li><a href="#userMeGet"><code><span class="http-method">get</span> /user/me</code></a></li>
-  
   <li><a href="#v1Connect.jsGet"><code><span class="http-method">get</span> /v1/connect.js</code></a></li>
   
   <li><a href="#v1ConnectMobileGet"><code><span class="http-method">get</span> /v1/connect/mobile</code></a></li>
@@ -231,13 +197,35 @@ code {
   
   <li><a href="#v1ConnectorsConnectorConnectGet"><code><span class="http-method">get</span> /v1/connectors/{connector}/connect</code></a></li>
   
+  <li><a href="#v1ConnectorsConnectorConnectInstructionsGet"><code><span class="http-method">get</span> /v1/connectors/{connector}/connectInstructions</code></a></li>
+  
+  <li><a href="#v1ConnectorsConnectorConnectParameterGet"><code><span class="http-method">get</span> /v1/connectors/{connector}/connectParameter</code></a></li>
+  
   <li><a href="#v1ConnectorsConnectorDisconnectGet"><code><span class="http-method">get</span> /v1/connectors/{connector}/disconnect</code></a></li>
   
   <li><a href="#v1ConnectorsConnectorInfoGet"><code><span class="http-method">get</span> /v1/connectors/{connector}/info</code></a></li>
   
   <li><a href="#v1ConnectorsConnectorUpdateGet"><code><span class="http-method">get</span> /v1/connectors/{connector}/update</code></a></li>
   
+  <li><a href="#v1CorrelationsGet"><code><span class="http-method">get</span> /v1/correlations</code></a></li>
+  
   <li><a href="#v1CorrelationsPost"><code><span class="http-method">post</span> /v1/correlations</code></a></li>
+  
+  <li><a href="#v1MeasurementSourcesGet"><code><span class="http-method">get</span> /v1/measurementSources</code></a></li>
+  
+  <li><a href="#v1MeasurementSourcesPost"><code><span class="http-method">post</span> /v1/measurementSources</code></a></li>
+  
+  <li><a href="#v1MeasurementsGet"><code><span class="http-method">get</span> /v1/measurements</code></a></li>
+  
+  <li><a href="#v1MeasurementsPost"><code><span class="http-method">post</span> /v1/measurements</code></a></li>
+  
+  <li><a href="#v1MeasurementsDailyGet"><code><span class="http-method">get</span> /v1/measurements/daily</code></a></li>
+  
+  <li><a href="#v1MeasurementsRangeGet"><code><span class="http-method">get</span> /v1/measurementsRange</code></a></li>
+  
+  <li><a href="#v1Oauth2AuthorizeGet"><code><span class="http-method">get</span> /v1/oauth2/authorize</code></a></li>
+  
+  <li><a href="#v1Oauth2TokenGet"><code><span class="http-method">get</span> /v1/oauth2/token</code></a></li>
   
   <li><a href="#v1OrganizationsOrganizationIdUsersPost"><code><span class="http-method">post</span> /v1/organizations/{organizationId}/users</code></a></li>
   
@@ -245,7 +233,33 @@ code {
   
   <li><a href="#v1OrganizationsOrganizationIdUsersUserIdVariablesVariableNameEffectsGet"><code><span class="http-method">get</span> /v1/organizations/{organizationId}/users/{userId}/variables/{variableName}/effects</code></a></li>
   
+  <li><a href="#v1PairsGet"><code><span class="http-method">get</span> /v1/pairs</code></a></li>
+  
+  <li><a href="#v1PublicCorrelationsSearchSearchGet"><code><span class="http-method">get</span> /v1/public/correlations/search/{search}</code></a></li>
+  
+  <li><a href="#v1PublicVariablesGet"><code><span class="http-method">get</span> /v1/public/variables</code></a></li>
+  
+  <li><a href="#v1PublicVariablesSearchSearchGet"><code><span class="http-method">get</span> /v1/public/variables/search/{search}</code></a></li>
+  
+  <li><a href="#v1UnitCategoriesGet"><code><span class="http-method">get</span> /v1/unitCategories</code></a></li>
+  
+  <li><a href="#v1UnitsGet"><code><span class="http-method">get</span> /v1/units</code></a></li>
+  
+  <li><a href="#v1UnitsVariableGet"><code><span class="http-method">get</span> /v1/unitsVariable</code></a></li>
+  
+  <li><a href="#v1UserMeGet"><code><span class="http-method">get</span> /v1/user/me</code></a></li>
+  
   <li><a href="#v1UserVariablesPost"><code><span class="http-method">post</span> /v1/userVariables</code></a></li>
+  
+  <li><a href="#v1VariableCategoriesGet"><code><span class="http-method">get</span> /v1/variableCategories</code></a></li>
+  
+  <li><a href="#v1VariablesGet"><code><span class="http-method">get</span> /v1/variables</code></a></li>
+  
+  <li><a href="#v1VariablesPost"><code><span class="http-method">post</span> /v1/variables</code></a></li>
+  
+  <li><a href="#v1VariablesSearchSearchGet"><code><span class="http-method">get</span> /v1/variables/search/{search}</code></a></li>
+  
+  <li><a href="#v1VariablesVariableNameGet"><code><span class="http-method">get</span> /v1/variables/{variableName}</code></a></li>
   
   <li><a href="#v1VariablesVariableNameCausesGet"><code><span class="http-method">get</span> /v1/variables/{variableName}/causes</code></a></li>
   
@@ -259,16 +273,6 @@ code {
   
   <li><a href="#v1VotesDeletePost"><code><span class="http-method">post</span> /v1/votes/delete</code></a></li>
   
-  <li><a href="#variableCategoriesGet"><code><span class="http-method">get</span> /variableCategories</code></a></li>
-  
-  <li><a href="#variablesGet"><code><span class="http-method">get</span> /variables</code></a></li>
-  
-  <li><a href="#variablesPost"><code><span class="http-method">post</span> /variables</code></a></li>
-  
-  <li><a href="#variablesSearchSearchGet"><code><span class="http-method">get</span> /variables/search/{search}</code></a></li>
-  
-  <li><a href="#variablesVariableNameGet"><code><span class="http-method">get</span> /variables/{variableName}</code></a></li>
-  
   
   
   </ol>
@@ -278,988 +282,13 @@ code {
   
   
   
-  <div class="method"><a name="correlationsGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /correlations</code></pre></div>
-    <div class="method-summary">Get correlations (<span class="nickname">correlationsGet</span>)</div>
-    
-    <div class="method-notes">Get correlations.&lt;br&gt;Supported filter parameters:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;correlationCoefficient&lt;/b&gt; - Pearson correlation coefficient between cause and effect after lagging by onset delay and grouping by duration of action&lt;/li&gt;&lt;li&gt;&lt;b&gt;onsetDelay&lt;/b&gt; - The number of seconds which pass following a cause measurement before an effect would likely be observed.&lt;/li&gt;&lt;li&gt;&lt;b&gt;durationOfAction&lt;/b&gt; - The time in seconds over which the cause would be expected to exert a measurable effect. We have selected a default value for each variable. This default value may be replaced by a user specified by adjusting their variable user settings.&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastUpdated&lt;/b&gt; - The time that this measurement was last updated in the UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;/ul&gt;&lt;br&gt;</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#array">array[Correlation]</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful Operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="correlationsPost"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="post"><code class="huge"><span class="http-method">post</span> /correlations</code></pre></div>
-    <div class="method-summary">Store or Update a Correlation (<span class="nickname">correlationsPost</span>)</div>
-    
-    <div class="method-notes">Store or Update a Correlation</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful operation
-    
-    
-    <h4 class="field-label">400</h4>
-    The received JSON was invalid or malformed
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-    <h4 class="field-label">404</h4>
-    Unknown target user ID
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="measurementSourcesGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /measurementSources</code></pre></div>
-    <div class="method-summary">Get measurement sources (<span class="nickname">measurementSourcesGet</span>)</div>
-    
-    <div class="method-notes">Returns a list of all the apps from which measurement data is obtained.</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#">MeasurementSource</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="measurementSourcesPost"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="post"><code class="huge"><span class="http-method">post</span> /measurementSources</code></pre></div>
-    <div class="method-summary">Add a data source (<span class="nickname">measurementSourcesPost</span>)</div>
-    
-    <div class="method-notes">Add a life-tracking app or device to the QuantiModo list of data sources.</div>
-
-    
-    <h3 class="field-label">Path parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
-    
-
-    
-
-    
-    <h3 class="field-label">Request body</h3>
-    <div class="field-items">
-      <div class="param">name (required)</div>
-
-      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; An array of names of data sources you want to add. </div>
-    </div>  <!-- field-items -->
-    
-
-    
-
-    
-    <h3 class="field-label">Query parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="measurementsGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /measurements</code></pre></div>
-    <div class="method-summary">Get measurements for this user (<span class="nickname">measurementsGet</span>)</div>
-    
-    <div class="method-notes">Measurements are any value that can be recorded like daily steps, a mood rating, or apples eaten. &lt;br&gt;Supported filter parameters:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;value&lt;/b&gt; - Value of measurement&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastUpdated&lt;/b&gt; - The time that this measurement was created or last updated in the UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;/ul&gt;&lt;br&gt;</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#">Measurement</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful Operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="measurementsV2Post"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="post"><code class="huge"><span class="http-method">post</span> /measurements/v2</code></pre></div>
-    <div class="method-summary">Post a new set or update existing measurements to the database (<span class="nickname">measurementsV2Post</span>)</div>
-    
-    <div class="method-notes">You can submit or update multiple measurements in a \&quot;measurements\&quot; sub-array.  If the variable these measurements correspond to does not already exist in the database, it will be automatically added.  The request body should look something like [{\&quot;measurements\&quot;:[{\&quot;timestamp\&quot;:1406419860,\&quot;value\&quot;:\&quot;1\&quot;,\&quot;note\&quot;:\&quot;I am a note about back pain.\&quot;},{\&quot;timestamp\&quot;:1406519865,\&quot;value\&quot;:\&quot;3\&quot;,\&quot;note\&quot;:\&quot;I am another note about back pain.\&quot;}],\&quot;name\&quot;:\&quot;Back Pain\&quot;,\&quot;source\&quot;:\&quot;QuantiModo\&quot;,\&quot;category\&quot;:\&quot;Symptoms\&quot;,\&quot;combinationOperation\&quot;:\&quot;MEAN\&quot;,\&quot;unit\&quot;:\&quot;/5\&quot;}]</div>
-
-    
-    <h3 class="field-label">Path parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
-    
-
-    
-
-    
-    <h3 class="field-label">Request body</h3>
-    <div class="field-items">
-      <div class="param">measurements (required)</div>
-
-      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; An array of measurements you want to insert. </div>
-    </div>  <!-- field-items -->
-    
-
-    
-
-    
-    <h3 class="field-label">Query parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Measurements successfully stored
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="measurementsRangeGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /measurementsRange</code></pre></div>
-    <div class="method-summary">Get measurements range for this user (<span class="nickname">measurementsRangeGet</span>)</div>
-    
-    <div class="method-notes">Get Unix time-stamp (epoch time) of the user&#39;s first and last measurements taken.</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#">MeasurementRange</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="oauth2AccesstokenGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /oauth2/accesstoken</code></pre></div>
-    <div class="method-summary">Access Token (<span class="nickname">oauth2AccesstokenGet</span>)</div>
-    
-    <div class="method-notes">Client provides authorization token obtained from /api/oauth2/authorize to this endpoint and receives an access token. Access token can then be used to query different API endpoints of QuantiModo.</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful Operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="oauth2AuthorizeGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /oauth2/authorize</code></pre></div>
-    <div class="method-summary">Authorize (<span class="nickname">oauth2AuthorizeGet</span>)</div>
-    
-    <div class="method-notes">Ask the user if they want to allow a client applications to submit or obtain data from their QM account. It will redirect the user to the url provided by the client application with the code as a query parameter or error in case of an error.</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful Operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="pairsGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /pairs</code></pre></div>
-    <div class="method-summary">Get pairs (<span class="nickname">pairsGet</span>)</div>
-    
-    <div class="method-notes">Pairs cause measurements with effect measurements grouped over the duration of action after the onset delay.</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#array">array[Pairs]</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="publicCorrelationsSearchSearchGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /public/correlations/search/{search}</code></pre></div>
-    <div class="method-summary">Get average correlations for variables containing search term (<span class="nickname">publicCorrelationsSearchSearchGet</span>)</div>
-    
-    <div class="method-notes">Returns the average correlations from all users for all public variables that contain the characters in the search query. Returns average of all users public variable correlations with a specified cause or effect.</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#array">array[Correlation]</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful Operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="publicVariablesGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /public/variables</code></pre></div>
-    <div class="method-summary">Get public variables (<span class="nickname">publicVariablesGet</span>)</div>
-    
-    <div class="method-notes">This endpoint retrieves an array of all public variables. Public variables are things like foods, medications, symptoms, conditions, and anything not unique to a particular user. For instance, a telephone number or name would not be a public variable.</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#">Variable</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="publicVariablesSearchSearchGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /public/variables/search/{search}</code></pre></div>
-    <div class="method-summary">Get top 5 PUBLIC variables with the most correlations (<span class="nickname">publicVariablesSearchSearchGet</span>)</div>
-    
-    <div class="method-notes">Get top 5 PUBLIC variables with the most correlations containing the entered search characters. For example, search for &#39;mood&#39; as an effect. Since &#39;Overall Mood&#39; has a lot of correlations with other variables, it should be in the autocomplete list.&lt;br&gt;Supported filter parameters:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;category&lt;/b&gt; - Category of Variable&lt;/li&gt;&lt;/ul&gt;&lt;br&gt;</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#">Variable</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Variables returned
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="unitCategoriesGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /unitCategories</code></pre></div>
-    <div class="method-summary">Get unit categories (<span class="nickname">unitCategoriesGet</span>)</div>
-    
-    <div class="method-notes">Get a list of the categories of measurement units such as &#39;Distance&#39;, &#39;Duration&#39;, &#39;Energy&#39;, &#39;Frequency&#39;, &#39;Miscellany&#39;, &#39;Pressure&#39;, &#39;Proportion&#39;, &#39;Rating&#39;, &#39;Temperature&#39;, &#39;Volume&#39;, and &#39;Weight&#39;.</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#">UnitCategory</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="unitsGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /units</code></pre></div>
-    <div class="method-summary">Get all available units (<span class="nickname">unitsGet</span>)</div>
-    
-    <div class="method-notes">Get all available units</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#array">array[Unit]</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="unitsVariableGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /unitsVariable</code></pre></div>
-    <div class="method-summary">Units for Variable (<span class="nickname">unitsVariableGet</span>)</div>
-    
-    <div class="method-notes">Get a list of all possible units to use for a given variable</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#array">array[Unit]</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="userMeGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /user/me</code></pre></div>
-    <div class="method-summary">Get all available units for variableGet authenticated user (<span class="nickname">userMeGet</span>)</div>
-    
-    <div class="method-notes">Returns user info for the currently authenticated user.</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#">User</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
   <div class="method"><a name="v1Connect.jsGet"/>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
     <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/connect.js</code></pre></div>
     <div class="method-summary">Get embeddable connect javascript (<span class="nickname">v1Connect.jsGet</span>)</div>
     
-    <div class="method-notes">Get embeddable connect javascript</div>
+    <div class="method-notes">Get embeddable connect javascript. Usage:\n\n  - Embedding in applications with popups for 3rd-party authentication\nwindows.\n\n    Use `qmSetupInPopup` function after connecting `connect.js`.\n\n  - Embedding in applications with popups for 3rd-party authentication\nwindows.\n\n    Requires a selector to block. It will be embedded in this block.\n\n    Use `qmSetupOnPage` function after connecting `connect.js`.\n\n  - Embedding in mobile applications without popups for 3rd-party\nauthentication.\n\n    Use `qmSetupOnMobile` function after connecting `connect.js`.</div>
 
     
 
@@ -1269,6 +298,13 @@ code {
 
     
 
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">t (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; User token </div>
+    </div>  <!-- field-items -->
     
 
     <!-- Remove Return type... unclear where this comes from;
@@ -1299,14 +335,6 @@ code {
     Embeddable connect javascript was returned
     
     
-    <h4 class="field-label">401</h4>
-    User token is missing
-    
-    
-    <h4 class="field-label">403</h4>
-    User token is incorrect
-    
-    
   </div> <!-- method -->
   <hr/>
   
@@ -1326,6 +354,13 @@ code {
 
     
 
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">t (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; User token </div>
+    </div>  <!-- field-items -->
     
 
     <!-- Remove Return type... unclear where this comes from;
@@ -1373,7 +408,7 @@ code {
     <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/connectors/list</code></pre></div>
     <div class="method-summary">List of Connectors (<span class="nickname">v1ConnectorsListGet</span>)</div>
     
-    <div class="method-notes">Returns a list of all available connectors. A connector pulls data from other data providers using their API or a screenscraper.</div>
+    <div class="method-notes">A connector pulls data from other data providers using their API or a screenscraper. Returns a list of all available connectors and information about them such as their id, name, whether the user has provided access, logo url, connection instructions, and the update history.</div>
 
     
 
@@ -1432,6 +467,13 @@ code {
     <div class="method-notes">Attempt to obtain a token from the data provider, store it in the database. With this, the connector to continue to obtain new user data until the token is revoked.</div>
 
     
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">connector (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device. Get a list of available connectors from the /connectors/list endpoint. </div>
+    </div>  <!-- field-items -->
+    
 
     
 
@@ -1484,6 +526,173 @@ code {
   </div> <!-- method -->
   <hr/>
   
+  <div class="method"><a name="v1ConnectorsConnectorConnectInstructionsGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/connectors/{connector}/connectInstructions</code></pre></div>
+    <div class="method-summary">Connection Instructions (<span class="nickname">v1ConnectorsConnectorConnectInstructionsGet</span>)</div>
+    
+    <div class="method-notes">Returns instructions that describe what parameters and endpoint to use to connect to the given data provider.</div>
+
+    
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">connector (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device. Get a list of available connectors from the /connectors/list endpoint. </div>
+    </div>  <!-- field-items -->
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">parameters (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; JSON Array of Parameters for the request to enable connector. </div><div class="param">url (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; URL which should be used to enable the connector. </div><div class="param">usePopup (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Should use popup when enabling connector </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+    <h4 class="field-label">404</h4>
+    Method not found. Could not execute the requested method.
+    
+    
+    <h4 class="field-label">500</h4>
+    Error during update. Unsupported response from update().
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1ConnectorsConnectorConnectParameterGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/connectors/{connector}/connectParameter</code></pre></div>
+    <div class="method-summary">Connect Parameter (<span class="nickname">v1ConnectorsConnectorConnectParameterGet</span>)</div>
+    
+    <div class="method-notes">Returns instructions that describe what parameters and endpoint to use to connect to the given data provider.</div>
+
+    
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">connector (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device. Get a list of available connectors from the /connectors/list endpoint. </div>
+    </div>  <!-- field-items -->
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">defaultValue (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Default parameter value </div><div class="param">displayName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of the parameter that is user visible in the form </div><div class="param">key (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of the property that the user has to enter such as username or password Connector (used in HTTP request) </div><div class="param">placeholder (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Placeholder hint value for the parameter input tag. </div><div class="param">type (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Type of input field such as those found here http://www.w3schools.com/tags/tag_input.asp </div><div class="param">usePopup (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Should use popup when enabling connector </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#">ConnectorInstruction</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+    <h4 class="field-label">404</h4>
+    Method not found. Could not execute the requested method.
+    
+    
+    <h4 class="field-label">500</h4>
+    Error during update. Unsupported response from update().
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
   <div class="method"><a name="v1ConnectorsConnectorDisconnectGet"/>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
@@ -1492,6 +701,13 @@ code {
     
     <div class="method-notes">The disconnect method deletes any stored tokens or connection information from the connectors database.</div>
 
+    
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">connector (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device. Get a list of available connectors from the /connectors/list endpoint. </div>
+    </div>  <!-- field-items -->
     
 
     
@@ -1553,6 +769,13 @@ code {
     
     <div class="method-notes">Returns information about the connector such as the connector id, whether or not is connected for this user (i.e. we have a token or credentials), and its update history for the user.</div>
 
+    
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">connector (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device. Get a list of available connectors from the /connectors/list endpoint. </div>
+    </div>  <!-- field-items -->
     
 
     
@@ -1618,6 +841,13 @@ code {
     <div class="method-notes">The update method tells the QM Connector Framework to check with the data provider (such as Fitbit or MyFitnessPal) and retrieve any new measurements available.</div>
 
     
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">connector (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Lowercase system name of the source application or device </div>
+    </div>  <!-- field-items -->
+    
 
     
 
@@ -1670,19 +900,85 @@ code {
   </div> <!-- method -->
   <hr/>
   
+  <div class="method"><a name="v1CorrelationsGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/correlations</code></pre></div>
+    <div class="method-summary">Get correlations (<span class="nickname">v1CorrelationsGet</span>)</div>
+    
+    <div class="method-notes">Get correlations.&lt;br&gt;Supported filter parameters:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;correlationCoefficient&lt;/b&gt; - Pearson correlation coefficient between cause and effect after lagging by onset delay and grouping by duration of action&lt;/li&gt;&lt;li&gt;&lt;b&gt;onsetDelay&lt;/b&gt; - The number of seconds which pass following a cause measurement before an effect would likely be observed.&lt;/li&gt;&lt;li&gt;&lt;b&gt;durationOfAction&lt;/b&gt; - The time in seconds over which the cause would be expected to exert a measurable effect. We have selected a default value for each variable. This default value may be replaced by a user specified by adjusting their variable user settings.&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastUpdated&lt;/b&gt; - The time that this measurement was last updated in the UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;/ul&gt;&lt;br&gt;</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">effect (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; ORIGINAL variable name of the effect variable for which the user desires correlations </div><div class="param">cause (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; ORIGINAL variable name of the cause variable for which the user desires correlations </div><div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div><div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div><div class="param">sort (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Sort by given field. If the field is prefixed with `-, it will sort in descending order. </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#array">array[Correlation]</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful Operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
   <div class="method"><a name="v1CorrelationsPost"/>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
     <pre class="post"><code class="huge"><span class="http-method">post</span> /v1/correlations</code></pre></div>
-    <div class="method-summary">Add correlation or/and vote for it (<span class="nickname">v1CorrelationsPost</span>)</div>
+    <div class="method-summary">Store or Update a Correlation (<span class="nickname">v1CorrelationsPost</span>)</div>
     
-    <div class="method-notes">Add correlation or/and vote for it</div>
+    <div class="method-notes">Add correlation</div>
 
-    
-    <h3 class="field-label">Path parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
     
 
     
@@ -1698,11 +994,6 @@ code {
 
     
 
-    
-    <h3 class="field-label">Query parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
     
 
     <!-- Remove Return type... unclear where this comes from;
@@ -1744,6 +1035,543 @@ code {
   </div> <!-- method -->
   <hr/>
   
+  <div class="method"><a name="v1MeasurementSourcesGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/measurementSources</code></pre></div>
+    <div class="method-summary">Get measurement sources (<span class="nickname">v1MeasurementSourcesGet</span>)</div>
+    
+    <div class="method-notes">Returns a list of all the apps from which measurement data is obtained.</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#">MeasurementSource</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1MeasurementSourcesPost"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /v1/measurementSources</code></pre></div>
+    <div class="method-summary">Add a data source (<span class="nickname">v1MeasurementSourcesPost</span>)</div>
+    
+    <div class="method-notes">Add a life-tracking app or device to the QuantiModo list of data sources.</div>
+
+    
+
+    
+
+    
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">name (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; An array of names of data sources you want to add. </div>
+    </div>  <!-- field-items -->
+    
+
+    
+
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1MeasurementsGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/measurements</code></pre></div>
+    <div class="method-summary">Get measurements for this user (<span class="nickname">v1MeasurementsGet</span>)</div>
+    
+    <div class="method-notes">Measurements are any value that can be recorded like daily steps, a mood rating, or apples eaten. &lt;br&gt;Supported filter parameters:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;value&lt;/b&gt; - Value of measurement&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastUpdated&lt;/b&gt; - The time that this measurement was created or last updated in the UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;/ul&gt;&lt;br&gt;</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">variableName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of the variable you want measurements for </div><div class="param">unit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The unit your want the measurements in </div><div class="param">startTime (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The lower limit of measurements returned (Epoch) </div><div class="param">endTime (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The upper limit of measurements returned (Epoch) </div><div class="param">groupingWidth (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The time (in seconds) over which measurements are grouped together </div><div class="param">groupingTimezone (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The time (in seconds) over which measurements are grouped together </div><div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div><div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div><div class="param">sort (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Sort by given field. If the field is prefixed with `-, it will sort in descending order. </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#">Measurement</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful Operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1MeasurementsPost"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /v1/measurements</code></pre></div>
+    <div class="method-summary">Post a new set or update existing measurements to the database (<span class="nickname">v1MeasurementsPost</span>)</div>
+    
+    <div class="method-notes">You can submit or update multiple measurements in a \&quot;measurements\&quot; sub-array.  If the variable these measurements correspond to does not already exist in the database, it will be automatically added.  The request body should look something like [{\&quot;measurements\&quot;:[{\&quot;timestamp\&quot;:1406419860,\&quot;value\&quot;:\&quot;1\&quot;,\&quot;note\&quot;:\&quot;I am a note about back pain.\&quot;},{\&quot;timestamp\&quot;:1406519865,\&quot;value\&quot;:\&quot;3\&quot;,\&quot;note\&quot;:\&quot;I am another note about back pain.\&quot;}],\&quot;name\&quot;:\&quot;Back Pain\&quot;,\&quot;source\&quot;:\&quot;QuantiModo\&quot;,\&quot;category\&quot;:\&quot;Symptoms\&quot;,\&quot;combinationOperation\&quot;:\&quot;MEAN\&quot;,\&quot;unit\&quot;:\&quot;/5\&quot;}]</div>
+
+    
+
+    
+
+    
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">measurements (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; An array of measurements you want to insert. </div>
+    </div>  <!-- field-items -->
+    
+
+    
+
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Measurements successfully stored
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1MeasurementsDailyGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/measurements/daily</code></pre></div>
+    <div class="method-summary">Get daily measurements for this user (<span class="nickname">v1MeasurementsDailyGet</span>)</div>
+    
+    <div class="method-notes">Measurements are any value that can be recorded like daily steps, a mood rating, or apples eaten. &lt;br&gt;Supported filter parameters:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;value&lt;/b&gt; - Value of measurement&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastUpdated&lt;/b&gt; - The time that this measurement was created or last updated in the UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;/ul&gt;&lt;br&gt;</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of the variable you want measurements for </div><div class="param">abbreviatedUnitName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The unit your want the measurements in </div><div class="param">startTime (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The lower limit of measurements returned (Iso8601) </div><div class="param">endTime (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The upper limit of measurements returned (Iso8601) </div><div class="param">groupingWidth (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The time (in seconds) over which measurements are grouped together </div><div class="param">groupingTimezone (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The time (in seconds) over which measurements are grouped together </div><div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div><div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div><div class="param">sort (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Sort by given field. If the field is prefixed with `-, it will sort in descending order. </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#">Measurement</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful Operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1MeasurementsRangeGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/measurementsRange</code></pre></div>
+    <div class="method-summary">Get measurements range for this user (<span class="nickname">v1MeasurementsRangeGet</span>)</div>
+    
+    <div class="method-notes">Get Unix time-stamp (epoch time) of the user&#39;s first and last measurements taken.</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">sources (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Enter source name to limit to specific source (varchar) </div><div class="param">user (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; If not specified, uses currently logged in user (bigint) </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#">MeasurementRange</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1Oauth2AuthorizeGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/oauth2/authorize</code></pre></div>
+    <div class="method-summary">Authorize (<span class="nickname">v1Oauth2AuthorizeGet</span>)</div>
+    
+    <div class="method-notes">Ask the user if they want to allow a client&#39;s application to submit or obtain data from their QM account. It will redirect the user to the url provided by the client application with the code as a query parameter or error in case of an error.</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">clientId (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; This is the unique ID that QuantiModo uses to identify your application. Obtain a client id by emailing info@quantimo.do. </div><div class="param">clientSecret (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; This is the secret for your obtained client_id. QuantiModo uses this to validate that only your application uses the client_id. </div><div class="param">responseType (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; If the value is code, launches a Basic flow, requiring a POST to the token endpoint to obtain the tokens. If the value is token id_token or id_token token, launches an Implicit flow, requiring the use of Javascript at the redirect URI to retrieve tokens from the URI #fragment. </div><div class="param">scope (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Scopes include basic, readmeasurements, and writemeasurements. The \&quot;basic\&quot; scope allows you to read user info (displayname, email, etc). The \&quot;readmeasurements\&quot; scope allows one to read a user&#39;s data. The \&quot;writemeasurements\&quot; scope allows you to write user data. Separate multiple scopes by a space. </div><div class="param">redirectUri (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The redirect URI is the URL within your client application that will receive the OAuth2 credentials. </div><div class="param">state (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; An opaque string that is round-tripped in the protocol; that is to say, it is returned as a URI parameter in the Basic flow, and in the URI </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful Operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1Oauth2TokenGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/oauth2/token</code></pre></div>
+    <div class="method-summary">Access Token (<span class="nickname">v1Oauth2TokenGet</span>)</div>
+    
+    <div class="method-notes">Client provides authorization token obtained from /api/v1/oauth2/authorize to this endpoint and receives an access token. Access token can then be used to query different API endpoints of QuantiModo.</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">clientId (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; This is the unique ID that QuantiModo uses to identify your application. Obtain a client id by emailing info@quantimo.do. </div><div class="param">clientSecret (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; This is the secret for your obtained client_id. QuantiModo uses this to validate that only your application uses the client_id. </div><div class="param">grantType (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Grant Type can be &#39;authorization_code&#39; or &#39;refresh_token&#39; </div><div class="param">responseType (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; If the value is code, launches a Basic flow, requiring a POST to the token endpoint to obtain the tokens. If the value is token id_token or id_token token, launches an Implicit flow, requiring the use of Javascript at the redirect URI to retrieve tokens from the URI #fragment. </div><div class="param">scope (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Scopes include basic, readmeasurements, and writemeasurements. The \&quot;basic\&quot; scope allows you to read user info (displayname, email, etc). The \&quot;readmeasurements\&quot; scope allows one to read a user&#39;s data. The \&quot;writemeasurements\&quot; scope allows you to write user data. Separate multiple scopes by a space. </div><div class="param">redirectUri (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The redirect URI is the URL within your client application that will receive the OAuth2 credentials. </div><div class="param">state (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; An opaque string that is round-tripped in the protocol; that is to say, it is returned as a URI parameter in the Basic flow, and in the URI </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful Operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
   <div class="method"><a name="v1OrganizationsOrganizationIdUsersPost"/>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
@@ -1774,11 +1602,6 @@ code {
 
     
 
-    
-    <h3 class="field-label">Query parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
     
 
     <!-- Remove Return type... unclear where this comes from;
@@ -1831,9 +1654,22 @@ code {
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
     <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/organizations/{organizationId}/users/{userId}/variables/{variableName}/causes</code></pre></div>
-    <div class="method-summary">Search user correlations for a given effect (<span class="nickname">v1OrganizationsOrganizationIdUsersUserIdVariablesVariableNameCausesGet</span>)</div>
+    <div class="method-summary">Search user correlations for a given cause (<span class="nickname">v1OrganizationsOrganizationIdUsersUserIdVariablesVariableNameCausesGet</span>)</div>
     
-    <div class="method-notes">Returns average of all correlations and votes for all user cause variables for a given effect. If parameter \&quot;include_public\&quot; is used, it also returns public correlations. User correlation overwrites or supersedes public correlation.</div>
+    <div class="method-notes">Returns average of all correlations and votes for all user cause variables for a given cause. If parameter \&quot;include_public\&quot; is used, it also returns public correlations. User correlation overwrites or supersedes public correlation.</div>
+
+    
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">organizationId (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Organization ID </div><div class="param">userId (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; User id </div><div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Effect variable name </div>
+    </div>  <!-- field-items -->
+    
 
     
 
@@ -1842,7 +1678,14 @@ code {
     
 
     
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">organizationToken (required)</div>
 
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Organization access token </div><div class="param">includePublic (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Include bublic correlations, Can be \&quot;1\&quot; or empty. </div>
+    </div>  <!-- field-items -->
     
 
     <!-- Remove Return type... unclear where this comes from;
@@ -1892,13 +1735,33 @@ code {
     <div class="method-notes">Returns average of all correlations and votes for all user cause variables for a given effect. If parameter \&quot;include_public\&quot; is used, it also returns public correlations. User correlation overwrites or supersedes public correlation.</div>
 
     
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">organizationId (required)</div>
 
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Organization ID </div><div class="param">userId (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; User id </div><div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Cause variable name </div>
+    </div>  <!-- field-items -->
     
 
     
 
     
 
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">organizationToken (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Organization access token </div><div class="param">includePublic (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Include bublic correlations, Can be \&quot;1\&quot; or empty. </div>
+    </div>  <!-- field-items -->
     
 
     <!-- Remove Return type... unclear where this comes from;
@@ -1939,6 +1802,543 @@ code {
   </div> <!-- method -->
   <hr/>
   
+  <div class="method"><a name="v1PairsGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/pairs</code></pre></div>
+    <div class="method-summary">Get pairs (<span class="nickname">v1PairsGet</span>)</div>
+    
+    <div class="method-notes">Pairs cause measurements with effect measurements grouped over the duration of action after the onset delay.</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">cause (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Original variable name for the explanatory or independent variable </div><div class="param">causeSource (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of data source that the cause measurements should come from </div><div class="param">causeUnit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Abbreviated name for the unit cause measurements to be returned in </div><div class="param">delay (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Delay before onset of action (in seconds) from the cause variable settings. </div><div class="param">duration (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Duration of action (in seconds) from the cause variable settings. </div><div class="param">effect (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Original variable name for the outcome or dependent variable </div><div class="param">effectSource (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of data source that the effectmeasurements should come from </div><div class="param">effectUnit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Abbreviated name for the unit effect measurements to be returned in </div><div class="param">endTime (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The most recent date (in epoch time) for which we should return measurements </div><div class="param">startTime (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The earliest date (in epoch time) for which we should return measurements </div><div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div><div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div><div class="param">sort (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Sort by given field. If the field is prefixed with `-, it will sort in descending order. </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#array">array[Pairs]</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1PublicCorrelationsSearchSearchGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/public/correlations/search/{search}</code></pre></div>
+    <div class="method-summary">Get average correlations for variables containing search term (<span class="nickname">v1PublicCorrelationsSearchSearchGet</span>)</div>
+    
+    <div class="method-notes">Returns the average correlations from all users for all public variables that contain the characters in the search query. Returns average of all users public variable correlations with a specified cause or effect.</div>
+
+    
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">search (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Name of the variable that you want to know the causes or effects of. </div>
+    </div>  <!-- field-items -->
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">effectOrCause (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Specifies whether to return the effects or causes of the searched variable. </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#array">array[Correlation]</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful Operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1PublicVariablesGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/public/variables</code></pre></div>
+    <div class="method-summary">Get public variables (<span class="nickname">v1PublicVariablesGet</span>)</div>
+    
+    <div class="method-notes">This endpoint retrieves an array of all public variables. Public variables are things like foods, medications, symptoms, conditions, and anything not unique to a particular user. For instance, a telephone number or name would not be a public variable.</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#">Variable</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1PublicVariablesSearchSearchGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/public/variables/search/{search}</code></pre></div>
+    <div class="method-summary">Get top 5 PUBLIC variables with the most correlations (<span class="nickname">v1PublicVariablesSearchSearchGet</span>)</div>
+    
+    <div class="method-notes">Get top 5 PUBLIC variables with the most correlations containing the entered search characters. For example, search for &#39;mood&#39; as an effect. Since &#39;Overall Mood&#39; has a lot of correlations with other variables, it should be in the autocomplete list.&lt;br&gt;Supported filter parameters:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;category&lt;/b&gt; - Category of Variable&lt;/li&gt;&lt;/ul&gt;&lt;br&gt;</div>
+
+    
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">search (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Search query can be some fraction of a variable name. </div>
+    </div>  <!-- field-items -->
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">effectOrCause (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Allows us to specify which column in the `correlations` table will be searched. Choices are effect or cause. </div><div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div><div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div><div class="param">sort (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Sort by given field. If the field is prefixed with `-, it will sort in descending order. </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#">Variable</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Variables returned
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1UnitCategoriesGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/unitCategories</code></pre></div>
+    <div class="method-summary">Get unit categories (<span class="nickname">v1UnitCategoriesGet</span>)</div>
+    
+    <div class="method-notes">Get a list of the categories of measurement units such as &#39;Distance&#39;, &#39;Duration&#39;, &#39;Energy&#39;, &#39;Frequency&#39;, &#39;Miscellany&#39;, &#39;Pressure&#39;, &#39;Proportion&#39;, &#39;Rating&#39;, &#39;Temperature&#39;, &#39;Volume&#39;, and &#39;Weight&#39;.</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#">UnitCategory</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1UnitsGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/units</code></pre></div>
+    <div class="method-summary">Get all available units (<span class="nickname">v1UnitsGet</span>)</div>
+    
+    <div class="method-notes">Get all available units</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">unitName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Unit name </div><div class="param">abbreviatedUnitName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Restrict the results to a specific unit by providing the unit abbreviation. </div><div class="param">categoryName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Restrict the results to a specific unit category by providing the unit category name. </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#array">array[Unit]</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1UnitsVariableGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/unitsVariable</code></pre></div>
+    <div class="method-summary">Units for Variable (<span class="nickname">v1UnitsVariableGet</span>)</div>
+    
+    <div class="method-notes">Get a list of all possible units to use for a given variable</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">unitName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of Unit you want to retrieve </div><div class="param">abbreviatedUnitName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Abbreviated Unit Name of the unit you want </div><div class="param">categoryName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of the category you want units for </div><div class="param">variable (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Name of the variable you want units for </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#array">array[Unit]</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1UserMeGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/user/me</code></pre></div>
+    <div class="method-summary">Get all available units for variableGet authenticated user (<span class="nickname">v1UserMeGet</span>)</div>
+    
+    <div class="method-notes">Returns user info for the currently authenticated user.</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#">User</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
   <div class="method"><a name="v1UserVariablesPost"/>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
@@ -1947,11 +2347,6 @@ code {
     
     <div class="method-notes">Users can change things like the display name for a variable. They can also change the parameters used in analysis of that variable such as the expected duration of action for a variable to have an effect, the estimated delay before the onset of action. In order to filter out erroneous data, they are able to set the maximum and minimum reasonable daily values for a variable.</div>
 
-    
-    <h3 class="field-label">Path parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
     
 
     
@@ -1967,11 +2362,6 @@ code {
 
     
 
-    
-    <h3 class="field-label">Query parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
     
 
     <!-- Remove Return type... unclear where this comes from;
@@ -2017,6 +2407,336 @@ code {
   </div> <!-- method -->
   <hr/>
   
+  <div class="method"><a name="v1VariableCategoriesGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/variableCategories</code></pre></div>
+    <div class="method-summary">Variable categories (<span class="nickname">v1VariableCategoriesGet</span>)</div>
+    
+    <div class="method-notes">The variable categories include Activity, Causes of Illness, Cognitive Performance, Conditions, Environment, Foods, Location, Miscellaneous, Mood, Nutrition, Physical Activity, Physique, Sleep, Social Interactions, Symptoms, Treatments, Vital Signs, and Work.</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#array">array[VariableCategory]</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1VariablesGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/variables</code></pre></div>
+    <div class="method-summary">Get variables by the category name (<span class="nickname">v1VariablesGet</span>)</div>
+    
+    <div class="method-notes">Get variables by the category name. &lt;br&gt;Supported filter parameters:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;name&lt;/b&gt; - Original name of the variable (supports exact name match only)&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastUpdated&lt;/b&gt; - Filter by the last time any of the properties of the variable were changed. Uses UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;li&gt;&lt;b&gt;source&lt;/b&gt; - The name of the data source that created the variable (supports exact name match only). So if you have a client application and you only want variables that were last updated by your app, you can include the name of your app here&lt;/li&gt;&lt;li&gt;&lt;b&gt;latestMeasurementTime&lt;/b&gt; - Filter variables based on the last time a measurement for them was created or updated in the UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;li&gt;&lt;b&gt;numberOfMeasurements&lt;/b&gt; - Filter variables by the total number of measurements that they have. This could be used of you want to filter or sort by popularity.&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastSource&lt;/b&gt; - Limit variables to those which measurements were last submitted by a specific source. So if you have a client application and you only want variables that were last updated by your app, you can include the name of your app here. (supports exact name match only)&lt;/li&gt;&lt;/ul&gt;&lt;br&gt;</div>
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">userId (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; User id </div><div class="param">category (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Filter data by category </div><div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div><div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div><div class="param">sort (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Sort by given field. If the field is prefixed with `-, it will sort in descending order. </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#">Variable</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Variables returned
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1VariablesPost"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="post"><code class="huge"><span class="http-method">post</span> /v1/variables</code></pre></div>
+    <div class="method-summary">Create Variables (<span class="nickname">v1VariablesPost</span>)</div>
+    
+    <div class="method-notes">Allows the client to create a new variable in the `variables` table.</div>
+
+    
+
+    
+
+    
+    <h3 class="field-label">Request body</h3>
+    <div class="field-items">
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Original name for the variable. </div>
+    </div>  <!-- field-items -->
+    
+
+    
+
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">201</h4>
+    Variable created
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1VariablesSearchSearchGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/variables/search/{search}</code></pre></div>
+    <div class="method-summary">Get variables by search query (<span class="nickname">v1VariablesSearchSearchGet</span>)</div>
+    
+    <div class="method-notes">Get variables containing the search characters for which the currently logged in user has measurements. Used to provide auto-complete function in variable search boxes.</div>
+
+    
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">search (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Search query which may be an entire variable name or a fragment of one. </div>
+    </div>  <!-- field-items -->
+    
+
+    
+
+    
+
+    
+
+    
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">categoryName (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Filter variables by category name. The variable categories include Activity, Causes of Illness, Cognitive Performance, Conditions, Environment, Foods, Location, Miscellaneous, Mood, Nutrition, Physical Activity, Physique, Sleep, Social Interactions, Symptoms, Treatments, Vital Signs, and Work. </div><div class="param">source (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Specify a data source name to only return variables from a specific data source. </div><div class="param">limit (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; The LIMIT is used to limit the number of results returned. So if you have 1000 results, but only want to the first 10, you would set this to 10 and offset to 0. </div><div class="param">offset (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Now suppose you wanted to show results 11-20. You&#39;d set the offset to 10 and the limit to 10. </div>
+    </div>  <!-- field-items -->
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#array">array[Variable]</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Successful operation
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
+  <div class="method"><a name="v1VariablesVariableNameGet"/>
+    <div class="method-path">
+    <a class="up" href="#__Methods">Up</a>
+    <pre class="get"><code class="huge"><span class="http-method">get</span> /v1/variables/{variableName}</code></pre></div>
+    <div class="method-summary">Get info about a variable (<span class="nickname">v1VariablesVariableNameGet</span>)</div>
+    
+    <div class="method-notes">Get all of the settings and information about a variable by its name. If the logged in user has modified the settings for the variable, these will be provided instead of the default settings for that variable.</div>
+
+    
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Variable name </div>
+    </div>  <!-- field-items -->
+    
+
+    
+
+    
+
+    
+
+    
+
+    <!-- Remove Return type... unclear where this comes from;
+         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
+         do we end up with a heading but not content
+
+    
+    <h3 class="field-label">Return type</h3>
+    <div class="return-type"><a href="#">Variable</a></div>
+    
+
+    Todo: process Response Object and its headers, schema, examples
+    -->
+
+    
+
+    
+    <h3 class="field-label">Produces</h3>
+    This API call produces the following media types according to the <span class="header">Accept</span> request header;
+    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
+    <ul>
+    
+      <li><code>application/json</code></li>
+    
+    </ul>
+    
+
+    <h3 class="field-label">Responses</h3>
+    
+    <h4 class="field-label">200</h4>
+    Variables returned
+    
+    
+    <h4 class="field-label">401</h4>
+    Not Authenticated
+    
+    
+  </div> <!-- method -->
+  <hr/>
+  
   <div class="method"><a name="v1VariablesVariableNameCausesGet"/>
     <div class="method-path">
     <a class="up" href="#__Methods">Up</a>
@@ -2025,6 +2745,13 @@ code {
     
     <div class="method-notes">Returns average of all correlations and votes for all user cause variables for a given effect</div>
 
+    
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Effect variable name </div>
+    </div>  <!-- field-items -->
     
 
     
@@ -2082,6 +2809,13 @@ code {
     <div class="method-notes">Returns average of all correlations and votes for all user effect variables for a given cause</div>
 
     
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Cause variable name </div>
+    </div>  <!-- field-items -->
+    
 
     
 
@@ -2138,6 +2872,13 @@ code {
     <div class="method-notes">Returns average of all correlations and votes for all public cause variables for a given effect</div>
 
     
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Effect variable name </div>
+    </div>  <!-- field-items -->
+    
 
     
 
@@ -2193,6 +2934,13 @@ code {
     
     <div class="method-notes">Returns average of all correlations and votes for all public cause variables for a given cause</div>
 
+    
+    <h3 class="field-label">Path parameters</h3>
+    <div class="field-items">
+      <div class="param">variableName (required)</div>
+
+      <div class="param-desc"><span class="param-type">Path Parameter</span> &mdash; Cause variable name </div>
+    </div>  <!-- field-items -->
     
 
     
@@ -2258,6 +3006,19 @@ code {
     
 
     
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">cause (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Cause variable name </div><div class="param">effect (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Effect variable name </div><div class="param">correlation (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Correlation value </div><div class="param">vote (optional)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Vote: 0 (for implausible) or 1 (for plausible) </div>
+    </div>  <!-- field-items -->
+    
 
     <!-- Remove Return type... unclear where this comes from;
          for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
@@ -2314,6 +3075,15 @@ code {
     
 
     
+    <h3 class="field-label">Query parameters</h3>
+    <div class="field-items">
+      <div class="param">cause (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Cause variable name </div><div class="param">effect (required)</div>
+
+      <div class="param-desc"><span class="param-type">Query Parameter</span> &mdash; Effect variable name </div>
+    </div>  <!-- field-items -->
+    
 
     <!-- Remove Return type... unclear where this comes from;
          for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
@@ -2353,304 +3123,6 @@ code {
   </div> <!-- method -->
   <hr/>
   
-  <div class="method"><a name="variableCategoriesGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /variableCategories</code></pre></div>
-    <div class="method-summary">Variable categories (<span class="nickname">variableCategoriesGet</span>)</div>
-    
-    <div class="method-notes">The variable categories include Activity, Causes of Illness, Cognitive Performance, Conditions, Environment, Foods, Location, Miscellaneous, Mood, Nutrition, Physical Activity, Physique, Sleep, Social Interactions, Symptoms, Treatments, Vital Signs, and Work.</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#array">array[VariableCategory]</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="variablesGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /variables</code></pre></div>
-    <div class="method-summary">Get variables by the category name (<span class="nickname">variablesGet</span>)</div>
-    
-    <div class="method-notes">Get variables by the category name. &lt;br&gt;Supported filter parameters:&lt;br&gt;&lt;ul&gt;&lt;li&gt;&lt;b&gt;name&lt;/b&gt; - Original name of the variable (supports exact name match only)&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastUpdated&lt;/b&gt; - Filter by the last time any of the properties of the variable were changed. Uses UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;li&gt;&lt;b&gt;source&lt;/b&gt; - The name of the data source that created the variable (supports exact name match only). So if you have a client application and you only want variables that were last updated by your app, you can include the name of your app here&lt;/li&gt;&lt;li&gt;&lt;b&gt;latestMeasurementTime&lt;/b&gt; - Filter variables based on the last time a measurement for them was created or updated in the UTC format \&quot;YYYY-MM-DDThh:mm:ss\&quot;&lt;/li&gt;&lt;li&gt;&lt;b&gt;numberOfMeasurements&lt;/b&gt; - Filter variables by the total number of measurements that they have. This could be used of you want to filter or sort by popularity.&lt;/li&gt;&lt;li&gt;&lt;b&gt;lastSource&lt;/b&gt; - Limit variables to those which measurements were last submitted by a specific source. So if you have a client application and you only want variables that were last updated by your app, you can include the name of your app here. (supports exact name match only)&lt;/li&gt;&lt;/ul&gt;&lt;br&gt;</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#">Variable</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Variables returned
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="variablesPost"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="post"><code class="huge"><span class="http-method">post</span> /variables</code></pre></div>
-    <div class="method-summary">Create Variables (<span class="nickname">variablesPost</span>)</div>
-    
-    <div class="method-notes">Allows the client to create a new variable in the `variables` table.</div>
-
-    
-    <h3 class="field-label">Path parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
-    
-
-    
-
-    
-    <h3 class="field-label">Request body</h3>
-    <div class="field-items">
-      <div class="param">variableName (required)</div>
-
-      <div class="param-desc"><span class="param-type">Body Parameter</span> &mdash; Original name for the variable. </div>
-    </div>  <!-- field-items -->
-    
-
-    
-
-    
-    <h3 class="field-label">Query parameters</h3>
-    <div class="field-items">
-      
-    </div>  <!-- field-items -->
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful operation
-    
-    
-    <h4 class="field-label">201</h4>
-    Variable created
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="variablesSearchSearchGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /variables/search/{search}</code></pre></div>
-    <div class="method-summary">Get variables by search query (<span class="nickname">variablesSearchSearchGet</span>)</div>
-    
-    <div class="method-notes">Get variables containing the search characters for which the currently logged in user has measurements. Used to provide auto-complete function in variable search boxes.</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#array">array[Variable]</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Successful operation
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
-  <div class="method"><a name="variablesVariableNameGet"/>
-    <div class="method-path">
-    <a class="up" href="#__Methods">Up</a>
-    <pre class="get"><code class="huge"><span class="http-method">get</span> /variables/{variableName}</code></pre></div>
-    <div class="method-summary">Get info about a variable (<span class="nickname">variablesVariableNameGet</span>)</div>
-    
-    <div class="method-notes">Get all of the settings and information about a variable by its name. If the logged in user has modified the settings for the variable, these will be provided instead of the default settings for that variable.</div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    <!-- Remove Return type... unclear where this comes from;
-         for our swagger.json files, it is always empty and there is no boolean guard or hasReturnType
-         do we end up with a heading but not content
-
-    
-    <h3 class="field-label">Return type</h3>
-    <div class="return-type"><a href="#">Variable</a></div>
-    
-
-    Todo: process Response Object and its headers, schema, examples
-    -->
-
-    
-
-    
-    <h3 class="field-label">Produces</h3>
-    This API call produces the following media types according to the <span class="header">Accept</span> request header;
-    the media type will be conveyed by the <span class="heaader">Content-Type</span> response header.
-    <ul>
-    
-      <li><code>application/json</code></li>
-    
-    </ul>
-    
-
-    <h3 class="field-label">Responses</h3>
-    
-    <h4 class="field-label">200</h4>
-    Variables returned
-    
-    
-    <h4 class="field-label">401</h4>
-    Not Authenticated
-    
-    
-  </div> <!-- method -->
-  <hr/>
-  
   
   
   
@@ -2664,6 +3136,14 @@ code {
   
   
     <li><a href="#CommonResponse"><code>CommonResponse</code></a></li>
+  
+  
+  
+    <li><a href="#HumanTime"><code>HumanTime</code></a></li>
+  
+  
+  
+    <li><a href="#ConnectorInstruction"><code>ConnectorInstruction</code></a></li>
   
   
   
@@ -2791,6 +3271,30 @@ code {
   
   
   <div class="model">
+    <h3 class="field-label"><a name="HumanTime">HumanTime</a> <a class="up" href="#__Models">Up</a></h3>
+    <div class="field-items">
+      <div class="param">date </div><div class="param-desc"><span class="param-type">String</span> date time</div>
+      <div class="param">timezone_type </div><div class="param-desc"><span class="param-type">Integer</span> </div>
+      <div class="param">timezone </div><div class="param-desc"><span class="param-type">String</span> timezone of date time</div>
+      
+    </div>  <!-- field-items -->
+  </div>
+  
+  
+  
+  <div class="model">
+    <h3 class="field-label"><a name="ConnectorInstruction">ConnectorInstruction</a> <a class="up" href="#__Models">Up</a></h3>
+    <div class="field-items">
+      <div class="param">url </div><div class="param-desc"><span class="param-type">String</span> url</div>
+      <div class="param">parameters </div><div class="param-desc"><span class="param-type">array[String]</span> parameters array</div>
+      <div class="param">usePopup </div><div class="param-desc"><span class="param-type">Boolean</span> usePopup</div>
+      
+    </div>  <!-- field-items -->
+  </div>
+  
+  
+  
+  <div class="model">
     <h3 class="field-label"><a name="Connector">Connector</a> <a class="up" href="#__Models">Up</a></h3>
     <div class="field-items">
       <div class="param">id </div><div class="param-desc"><span class="param-type">Integer</span> Connector ID number</div>
@@ -2851,7 +3355,9 @@ code {
     <div class="field-items">
       <div class="param">correlationCoefficient </div><div class="param-desc"><span class="param-type">BigDecimal</span> Pearson correlation coefficient between cause and effect measurements</div>
       <div class="param">cause </div><div class="param-desc"><span class="param-type">String</span> ORIGINAL variable name of the cause variable for which the user desires correlations.</div>
+      <div class="param">originalCause </div><div class="param-desc"><span class="param-type">String</span> original name of the cause.</div>
       <div class="param">effect </div><div class="param-desc"><span class="param-type">String</span> ORIGINAL variable name of the effect variable for which the user desires correlations.</div>
+      <div class="param">originalEffect </div><div class="param-desc"><span class="param-type">String</span> effect variable original name.</div>
       <div class="param">onsetDelay </div><div class="param-desc"><span class="param-type">Double</span> User estimated or default time after cause measurement before a perceivable effect is observed</div>
       <div class="param">durationOfAction </div><div class="param-desc"><span class="param-type">BigDecimal</span> Time over which the cause is expected to produce a perceivable effect following the onset delay</div>
       <div class="param">numberOfPairs </div><div class="param-desc"><span class="param-type">BigDecimal</span> Number of points that went into the correlation calculation</div>
@@ -2862,6 +3368,13 @@ code {
       <div class="param">causalityFactor </div><div class="param-desc"><span class="param-type">BigDecimal</span> </div>
       <div class="param">causeCategory </div><div class="param-desc"><span class="param-type">String</span> Variable category of the cause variable.</div>
       <div class="param">effectCategory </div><div class="param-desc"><span class="param-type">String</span> Variable category of the effect variable.</div>
+      <div class="param">valuePredictingHighOutcome </div><div class="param-desc"><span class="param-type">BigDecimal</span> cause value that predicts an above average effect value (in default unit for cause variable)</div>
+      <div class="param">valuePredictingLowOutcome </div><div class="param-desc"><span class="param-type">BigDecimal</span> cause value that predicts a below average effect value (in default unit for cause variable)</div>
+      <div class="param">optimalPearsonProduct </div><div class="param-desc"><span class="param-type">BigDecimal</span> Optimal Pearson Product</div>
+      <div class="param">averageVote </div><div class="param-desc"><span class="param-type">BigDecimal</span> Average Vote</div>
+      <div class="param">userVote </div><div class="param-desc"><span class="param-type">BigDecimal</span> User Vote</div>
+      <div class="param">causeUnit </div><div class="param-desc"><span class="param-type">String</span> Unit of Cause</div>
+      <div class="param">causeUnitId </div><div class="param-desc"><span class="param-type">Integer</span> Unit Id of Cause</div>
       
     </div>  <!-- field-items -->
   </div>
@@ -2900,10 +3413,16 @@ code {
       <div class="param">variable </div><div class="param-desc"><span class="param-type">String</span> ORIGINAL Name of the variable for which we are creating the measurement records</div>
       <div class="param">source </div><div class="param-desc"><span class="param-type">String</span> Application or device used to record the measurement values</div>
       <div class="param">timestamp </div><div class="param-desc"><span class="param-type">Long</span> Timestamp for the measurement event in epoch time</div>
+      <div class="param">startTime </div><div class="param-desc"><span class="param-type">String</span> Start Time for the measurement event in ISO 8601</div>
+      <div class="param">humanTime </div><div class="param-desc"><span class="param-type">HumanTime</span> Start Time for the measurement event in ISO 8601</div>
       <div class="param">value </div><div class="param-desc"><span class="param-type">Double</span> Converted measurement value in requested unit</div>
       <div class="param">unit </div><div class="param-desc"><span class="param-type">String</span> Unit of measurement as requested in GET request</div>
+      <div class="param">originalValue </div><div class="param-desc"><span class="param-type">Integer</span> Original value</div>
       <div class="param">storedValue </div><div class="param-desc"><span class="param-type">Double</span> Measurement value in the unit as orignally submitted</div>
       <div class="param">storedAbbreviatedUnitName </div><div class="param-desc"><span class="param-type">String</span> Unit of measurement as originally submitted</div>
+      <div class="param">originalAbbreviatedUnitName </div><div class="param-desc"><span class="param-type">String</span> Original Unit of measurement as originally submitted</div>
+      <div class="param">abbreviatedUnitName </div><div class="param-desc"><span class="param-type">String</span> Unit of measurement as originally submitted</div>
+      <div class="param">note </div><div class="param-desc"><span class="param-type">String</span> Note of measurement</div>
       
     </div>  <!-- field-items -->
   </div>
@@ -3086,7 +3605,8 @@ code {
       <div class="param">name </div><div class="param-desc"><span class="param-type">String</span> User-defined variable display name.</div>
       <div class="param">originalName </div><div class="param-desc"><span class="param-type">String</span> Name used when the variable was originally created in the `variables` table.</div>
       <div class="param">category </div><div class="param-desc"><span class="param-type">String</span> Variable category like Mood, Sleep, Physical Activity, Treatment, Symptom, etc.</div>
-      <div class="param">unit </div><div class="param-desc"><span class="param-type">String</span> Abbreviated name of the default unit for the variable</div>
+      <div class="param">abbreviatedUnitName </div><div class="param-desc"><span class="param-type">String</span> Abbreviated name of the default unit for the variable</div>
+      <div class="param">abbreviatedUnitId </div><div class="param-desc"><span class="param-type">Integer</span> Id of the default unit for the variable</div>
       <div class="param">sources </div><div class="param-desc"><span class="param-type">String</span> Comma-separated list of source names to limit variables to those sources</div>
       <div class="param">minimumValue </div><div class="param-desc"><span class="param-type">Double</span> Minimum reasonable value for this variable (uses default unit)</div>
       <div class="param">maximumValue </div><div class="param-desc"><span class="param-type">Double</span> Maximum reasonable value for this variable (uses default unit)</div>
@@ -3106,10 +3626,10 @@ code {
       <div class="param">outcome </div><div class="param-desc"><span class="param-type">Integer</span> Outcome variables (those with `outcome` == 1) are variables for which a human would generally want to identify the influencing factors.  These include symptoms of illness, physique, mood, cognitive performance, etc.  Generally correlation calculations are only performed on outcome variables.</div>
       <div class="param">measurementsAtLastAnalysis </div><div class="param-desc"><span class="param-type">Integer</span> The number of measurements that a given user had for this variable the last time a correlation calculation was performed. Generally correlation values are only updated once the current number of measurements for a variable is more than 10% greater than the measurementsAtLastAnalysis.  This avoids a computationally-demanding recalculation when there&#39;s not enough new data to make a significant difference in the correlation.</div>
       <div class="param">numberOfMeasurements </div><div class="param-desc"><span class="param-type">Integer</span> Number of measurements</div>
-      <div class="param">lastUnit </div><div class="param-desc"><span class="param-type">Integer</span> Last unit</div>
+      <div class="param">lastUnit </div><div class="param-desc"><span class="param-type">String</span> Last unit</div>
       <div class="param">lastValue </div><div class="param-desc"><span class="param-type">Integer</span> Last value</div>
       <div class="param">mostCommonValue </div><div class="param-desc"><span class="param-type">Integer</span> Most common value</div>
-      <div class="param">mostCommonUnit </div><div class="param-desc"><span class="param-type">Integer</span> Most common unit</div>
+      <div class="param">mostCommonUnit </div><div class="param-desc"><span class="param-type">String</span> Most common unit</div>
       <div class="param">lastSource </div><div class="param-desc"><span class="param-type">Integer</span> Last source</div>
       
     </div>  <!-- field-items -->
@@ -3135,8 +3655,8 @@ code {
       <div class="param">durationOfAction </div><div class="param-desc"><span class="param-type">Integer</span> Estimated duration of time following the onset delay in which a stimulus produces a perceivable effect</div>
       <div class="param">fillingValue </div><div class="param-desc"><span class="param-type">Integer</span> fillingValue</div>
       <div class="param">joinWith </div><div class="param-desc"><span class="param-type">String</span> joinWith</div>
-      <div class="param">maximumValue </div><div class="param-desc"><span class="param-type">Float</span> maximumValue</div>
-      <div class="param">minimumValue </div><div class="param-desc"><span class="param-type">Float</span> minimumValue</div>
+      <div class="param">maximumAllowedValue </div><div class="param-desc"><span class="param-type">Float</span> maximumAllowedValue</div>
+      <div class="param">minimumAllowedValue </div><div class="param-desc"><span class="param-type">Float</span> minimumAllowedValue</div>
       <div class="param">name </div><div class="param-desc"><span class="param-type">String</span> name</div>
       <div class="param">onsetDelay </div><div class="param-desc"><span class="param-type">Integer</span> onsetDelay</div>
       <div class="param">unit </div><div class="param-desc"><span class="param-type">String</span> unit</div>
